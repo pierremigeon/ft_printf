@@ -24,23 +24,33 @@ char	*hex_prefix(int ul_case, int len)
 	return ((len) ? "0x100" : "0x10");
 }
 
+int	ishash(t_flags flags)
+{
+	return (flags.flags & 1);
+}
 
-// Need to switch this to largest possible int type. 
-void    putnbr_base(int i, int base, int depth, int ul_case)
+int	isflags(t_flags flags)
+{
+	return (flags.x);
+}
+
+int    putnbr_base(long i, int base, int depth, t_flags flags)
 {
 	char 		out;
 	static int 	d;
+	int		o;
 
 	d = depth;
 	if (i >= base)
-		putnbr_base(i / base, base, depth + 1, ul_case);
-	if (d == depth)
+		o = putnbr_base(i / base, base, depth + 1, flags);
+	if (d == depth && ishash(flags))
 		(depth == 5) ? write(1, hex_prefix(ul_case, 1), 5) : write(1, hex_prefix(ul_case, 0), 4);
-	if (ul_case == 0)
+	if (is_cap(flags))
 		out = (i % base < 10) ? '0' + i % base : 'a' + i % base % 10;
 	else
 		out = (i % base < 10) ? '0' + i % base : 'A' + i % base % 10;
 	write(1, &out, 1);
+	return (o);
 }
 
 int	test_ls(char fmt_substr)
@@ -79,11 +89,25 @@ int     dispatch_ll(va_list ap, char **fmt_substr)
 	-%lU is unsigned long
 */
 
-int	standard_dispatch(va_list ap, char **fmt_substr, t_flags *flags)
+int	get_base(char c)
+{
+	if (c == 'i' || c == 'd' || c == 'u')
+		return (10);
+	if (c == 'c')
+		return (1);
+	if (c == 'x' || c == 'X' || c == 'p')
+		return (16);
+        if (c == 'o')
+		return (8);
+	return (0);
+}
+
+int	standard_dispatch(va_list ap, char **fmt_substr, t_flags flags)
 {
 	char		*s;
 	int		i;
 	unsigned int	u;
+	int		base;
 
 	if (**fmt_substr == 's')
 	{
@@ -92,18 +116,12 @@ int	standard_dispatch(va_list ap, char **fmt_substr, t_flags *flags)
 	}
 	else
 		i = (**fmt_substr != 'u') ? va_arg(ap, int) : va_arg(ap, unsigned int);
-	if (**fmt_substr == 'i' || **fmt_substr == 'd')
-		ft_putnbr(i);
-	else if (**fmt_substr == 'c')
+	if ((base = get_base(**fmt_substr)) == 1)
 		write(1, &i, 1);
-	else if (**fmt_substr == 'x' || **fmt_substr == 'X' || **fmt_substr == 'p')
-		putnbr_base(i, 16, 0, (**fmt_substr == 'X'));
-	else if (**fmt_substr == 'o')
-		putnbr_base(i, 8, 0, 0);
-	else if (**fmt_substr == 'u')
-		putnbr_base(i, 10, 0, 0);
+	else
+		base = putnbr_base(i, base, 0, flags);
 	(*fmt_substr)++;
-	return (5);
+	return (base);
 }
 
 int	is_flag(char c)
@@ -111,42 +129,42 @@ int	is_flag(char c)
 	return (c == '#' || c == '0' || c == '-' || c == ' ' || c == '+');
 }
 
-t_flags	*new_flags(void)
+int	test_caps(char *str)
 {
-	t_flags	*out;
+	char	*flag;
 
-	if(!(out = (t_flags *)malloc(sizeof(t_flags))))
-		exit(1);
-	return (out);
+	if ((flag = ft_strchr(str, 'X')))
+		return (1);
+	return (0);
 }
 
-t_flags	*get_flags(char **fmt_substr)
+t_flags	get_flags(char **fmt_substr)
 {
-	t_flags *out;
+	t_flags out;
 
-	out = new_flags();
-	out->flags = 0;
-	out->field_width = ft_atoi(*fmt_substr);
+	out.flags = 0;
+	out.x = test_caps(*fmt_substr);
+	out.field_width = ft_atoi(*fmt_substr);
 	while(ft_isdigit(**fmt_substr))
 		(*fmt_substr)++;
 	while (is_flag(**fmt_substr))
 	{
 		if (**fmt_substr == '#')
-			out->flags |= 1;
+			out.flags |= 1;
 		if (**fmt_substr == '0')
-                	out->flags |= 2;
+                	out.flags |= 2;
 		if (**fmt_substr == '-')
-                	out->flags |= 4;
+                	out.flags |= 4;
 		if (**fmt_substr == ' ')
-                	out->flags |= 10;
+                	out.flags |= 10;
 		if (**fmt_substr == '+')
-			out->flags |= 20;
+			out.flags |= 20;
 		(*fmt_substr)++;
 	}
-	if ((out->flags & 2) && (out->flags & 4))
-		out->flags ^= 2;
-	if ((out->flags & 20) && (out->flags & 10))
-		out->flags ^= 10;
+	if ((out.flags & 2) && (out.flags & 4))
+		out.flags ^= 2;
+	if ((out.flags & 20) && (out.flags & 10))
+		out.flags ^= 10;
 	return (out);
 }
 
@@ -173,13 +191,11 @@ int	get_function(char **fmt_substr)
 	if (**fmt_substr == 'z')
 		return (5);
 	else
-		return (6);
+		return (0);
 }
 
 int	dispatcher(va_list ap, char **fmt_substr)
 {
-	t_flags *flags;
-
 	t_dispatcher 	functs[1] = {
 		//&dispatch_l,
 		//&dispatch_ll,
@@ -189,8 +205,7 @@ int	dispatcher(va_list ap, char **fmt_substr)
 		//&dispatch_z,
 		&standard_dispatch
 	};
-	flags = get_flags(fmt_substr);
-	return (functs[get_function(fmt_substr)](ap, fmt_substr, flags));
+	return (functs[get_function(fmt_substr)](ap, fmt_substr, get_flags(fmt_substr)));
 }
 
 int	write_length(char *fmt_str)
@@ -236,8 +251,9 @@ int	main()
 	char	c = 'A';
 	unsigned int	u = 42;
 
-	ft_printf("Printf %% %is %ih %s and this is a number %i and a number also %d and this is a character: %c and this is an address %p\n", 5, 5, string, i, i, c, string);
-	printf ("This is the address with native function: %p\n", string);
-	ft_printf ("Here are all the standard conversions: %s %S %p %d %D %i %o %O %u %U %x %X %c %C\n", string, string, string, i, i, i, i, i, u, u, i, i, *string, *string);
+	//ft_printf("Printf %% %is %ih %s and this is a number %i and a number also %d and this is a character: %c and this is an address %p\n", 5, 5, string, i, i, c, string);
+	//printf ("This is the address with native function: %p\n", string);
+	ft_printf ("Here are all the standard conversions: %s %p %d %D %i %o %O %u %U %x %X %c %C\n", string, string, i, i, i, i, i, u, u, i, i, *string, *string);
+	printf ("Here are all the standard conversions: %s %p %d %D %i %o %O %u %U %x %X %c %C\n", string, string, i, i, i, i, i, u, u, i, i, *string, *string);
 	return (0);
 }

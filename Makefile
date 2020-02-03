@@ -7,7 +7,7 @@ make:
 	gcc $(SRC) $(LIB) -o $(OUT)
 
 runtest:
-	gcc -g ft_printf.c ./libft/libft.a -o $(OUT)
+	gcc -g $(SRC) $(LIB) -o $(OUT)
 	lldb ft_printf
 
 clean:
@@ -16,3 +16,6 @@ clean:
 
 edit:
 	vi ./src/ft_printf.c
+
+edit_h:
+	vi ./includes/$(OUT).h
