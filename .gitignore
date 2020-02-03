@@ -1,0 +1,4 @@
+ft_printf
+ft_printf.dSYM
+libft/libft.a
+libft/*.o
