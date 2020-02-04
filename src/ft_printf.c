@@ -1,5 +1,7 @@
 #include "../includes/ft_printf.h"
 
+#include <assert.h>
+
 /*
 
 Note: Any flags past some point are just treated as characters to print:
@@ -17,21 +19,28 @@ Errors to handle:
 
 */
 
-char	*hex_prefix(int ul_case, int len)
-{
-	if (ul_case)
-		return ((len) ? "0X100" : "0X10");
-	return ((len) ? "0x100" : "0x10");
-}
-
 int	ishash(t_flags flags)
 {
 	return (flags.flags & 1);
 }
 
-int	isflags(t_flags flags)
+int	iscaps(t_flags flags)
 {
 	return (flags.x);
+}
+
+int	prefix(int base, int depth, int cap)
+{
+	if (base == 16)
+	{
+		if (depth == 5)
+			(cap) ? write(1, "0X100", 5) : write(1, "0x100", 5);
+		else
+			(cap) ? write(1, "0X10", 4) : write(1, "0x10", 4);
+	}
+	else
+		write(1, "0", 1);
+	return ((base == 16) ? depth : 1);
 }
 
 int    putnbr_base(long i, int base, int depth, t_flags flags)
@@ -40,17 +49,18 @@ int    putnbr_base(long i, int base, int depth, t_flags flags)
 	static int 	d;
 	int		o;
 
+	o = 0;
 	d = depth;
 	if (i >= base)
-		o = putnbr_base(i / base, base, depth + 1, flags);
+		o += putnbr_base(i / base, base, depth + 1, flags);
 	if (d == depth && ishash(flags))
-		(depth == 5) ? write(1, hex_prefix(ul_case, 1), 5) : write(1, hex_prefix(ul_case, 0), 4);
-	if (is_cap(flags))
+		o += prefix(base, depth, iscaps(flags));
+	if (iscaps(flags))
 		out = (i % base < 10) ? '0' + i % base : 'a' + i % base % 10;
 	else
 		out = (i % base < 10) ? '0' + i % base : 'A' + i % base % 10;
 	write(1, &out, 1);
-	return (o);
+	return (o + 1);
 }
 
 int	test_ls(char fmt_substr)
@@ -112,7 +122,8 @@ int	standard_dispatch(va_list ap, char **fmt_substr, t_flags flags)
 	if (**fmt_substr == 's')
 	{
 		s = va_arg(ap, char *);
-		ft_putstr(s);
+		(*fmt_substr)++;
+		return (ft_putstrl(s));
 	}
 	else
 		i = (**fmt_substr != 'u') ? va_arg(ap, int) : va_arg(ap, unsigned int);
@@ -129,13 +140,22 @@ int	is_flag(char c)
 	return (c == '#' || c == '0' || c == '-' || c == ' ' || c == '+');
 }
 
-int	test_caps(char *str)
+int	test_X(char *str)
 {
-	char	*flag;
-
-	if ((flag = ft_strchr(str, 'X')))
-		return (1);
+	while (*str && *str != ' ')
+		if (*str++ == 'X')
+			return (1);
 	return (0);
+}
+
+void	finalize_flags(char c, t_flags *out)
+{
+	if (c == 'p' && (out->flags ^ 1))
+		out->flags |= 1;
+        if ((out->flags & 2) && (out->flags & 4)) 
+                out->flags ^= 2;
+        if ((out->flags & 20) && (out->flags & 10))
+                out->flags ^= 10;
 }
 
 t_flags	get_flags(char **fmt_substr)
@@ -143,28 +163,25 @@ t_flags	get_flags(char **fmt_substr)
 	t_flags out;
 
 	out.flags = 0;
-	out.x = test_caps(*fmt_substr);
+	out.x = test_X(*fmt_substr);
 	out.field_width = ft_atoi(*fmt_substr);
 	while(ft_isdigit(**fmt_substr))
 		(*fmt_substr)++;
 	while (is_flag(**fmt_substr))
 	{
-		if (**fmt_substr == '#')
+		if (**fmt_substr == '#' && (out.flags ^ 1))
 			out.flags |= 1;
-		if (**fmt_substr == '0')
+		if (**fmt_substr == '0' && (out.flags ^ 2))
                 	out.flags |= 2;
-		if (**fmt_substr == '-')
+		if (**fmt_substr == '-' && (out.flags ^ 4))
                 	out.flags |= 4;
-		if (**fmt_substr == ' ')
+		if (**fmt_substr == ' ' && (out.flags ^ 10))
                 	out.flags |= 10;
-		if (**fmt_substr == '+')
+		if (**fmt_substr == '+' && (out.flags ^ 20))
 			out.flags |= 20;
 		(*fmt_substr)++;
 	}
-	if ((out.flags & 2) && (out.flags & 4))
-		out.flags ^= 2;
-	if ((out.flags & 20) && (out.flags & 10))
-		out.flags ^= 10;
+	finalize_flags(**fmt_substr, &out);
 	return (out);
 }
 
@@ -250,10 +267,23 @@ int	main()
 	int	i = 5;
 	char	c = 'A';
 	unsigned int	u = 42;
+	int		bytes_printed;
 
 	//ft_printf("Printf %% %is %ih %s and this is a number %i and a number also %d and this is a character: %c and this is an address %p\n", 5, 5, string, i, i, c, string);
 	//printf ("This is the address with native function: %p\n", string);
-	ft_printf ("Here are all the standard conversions: %s %p %d %D %i %o %O %u %U %x %X %c %C\n", string, string, i, i, i, i, i, u, u, i, i, *string, *string);
-	printf ("Here are all the standard conversions: %s %p %d %D %i %o %O %u %U %x %X %c %C\n", string, string, i, i, i, i, i, u, u, i, i, *string, *string);
+	bytes_printed = ft_printf ("Here are all the standard conversions: %s %p %d %i %o %u %x %X %c\n", string, string, i, i, i, u, i, i, *string);
+	printf ("Bytes printed were %i\n", bytes_printed);
+	bytes_printed = printf ("Here are all the standard conversions: %s %p %d %i %o %u %x %X %c\n", string, string, i, i, i, u, i, i, *string);
+	printf ("Bytes printed were %i\n", bytes_printed);
+
+	assert(ft_printf("Here are all the standard conversions: %s", string) == printf("Here are all the standard conversions: %s", string));
+	assert(ft_printf("%p", string) == printf ("%p", string));
+	assert(ft_printf("%d", i) == printf ("%d", i));
+	assert(ft_printf("%i", i) == printf ("%i", i));
+	assert(ft_printf("%o", i) == printf ("%o", i));
+	assert(ft_printf("%u", u) == printf ("%u", u));
+	assert(ft_printf("%x", i) == printf ("%x", i));
+	assert(ft_printf("%X", i) == printf ("%X", i));
+	assert(ft_printf("%c", *string) == printf ("%c", *string));
 	return (0);
 }

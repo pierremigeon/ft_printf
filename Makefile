@@ -11,8 +11,9 @@ runtest:
 	lldb ft_printf
 
 clean:
-	rm ft_printf
-	@if [ -e $(OUT).dSYM ]; then rm -rf $(OUT).dSYM; fi
+	@echo "removing executable"
+	@rm ft_printf
+	@if [ -e $(OUT).dSYM ]; then rm -rf $(OUT).dSYM && echo "Removing debugging directory"; fi
 
 edit:
 	vi ./src/ft_printf.c
