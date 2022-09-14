@@ -6,7 +6,7 @@ Once again, I'm updating a old project. Taking a break from the minishell to cat
 -Pierre
 
 
-***Requirements:***
+## Requirements
 1) must handle cspdiuxXf% conversions 
 2) must handle '+0 .*-' flags
 3) must handle width and precision specifiers
