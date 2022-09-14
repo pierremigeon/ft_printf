@@ -7,13 +7,14 @@
 #include "../libft/libft.h"
 #include <stdio.h>
 
-typedef struct s_flags
+typedef struct 	s_flags
 {
-        unsigned int    flags:5;
-        unsigned int    field_width;
+	unsigned int    flags:5;
+	unsigned int    field_width;
+	unsigned int	precision;
 	unsigned int	x;
-}       t_flags;
+}		t_flags;
 
-typedef int     (*t_dispatcher)(va_list ap, char **fmt_substr, t_flags flags);
+typedef int     (*t_dispatcher)(va_list ap, char **fmt_substr, t_flags *flags);
 
 #endif

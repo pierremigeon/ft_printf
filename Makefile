@@ -16,7 +16,7 @@ clean:
 	@if [ -e $(OUT).dSYM ]; then rm -rf $(OUT).dSYM && echo "Removing debugging directory"; fi
 
 edit:
-	vi ./src/ft_printf.c
+	vi $(SRC)
 
 edit_h:
 	vi ./includes/$(OUT).h
