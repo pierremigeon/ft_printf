@@ -135,12 +135,37 @@ int	print_start(t_flags *flags, int i)
 	return (bytes);
 }
 
-int	print_string(va_list ap, char **fmt_substr)
+char	*ft_strnew2(size_t size, int c)
+{
+	char *str;
+
+	if (!(str = (char *)malloc(sizeof(char) * (size + 1))))
+		return (NULL);
+	ft_memset(str, c, size);
+	*(str + size) = '\0';
+	return (str);
+}
+
+void	process_field_width(int width)
+{
+	char *blanks;
+
+	blanks = ft_strnew2(width, ' ');
+	write(1, blanks, width);
+	free(blanks);
+}
+
+int	print_string(va_list ap, char **fmt_substr, t_flags *flags)
 {
 	char	*s;
+	int	w_remain;
 
 	s = va_arg(ap, char *);
 	(*fmt_substr)++;
+	flags->out_length = ft_strlen(s);
+	w_remain = flags->field_width - flags->out_length;
+	if (w_remain > 0)
+		process_field_width(w_remain);
 	return (ft_putstrl(s));
 }
 
@@ -151,7 +176,7 @@ int	standard_dispatch(va_list ap, char **fmt_substr, t_flags *flags)
 	int		base;
 
 	if (**fmt_substr == 's')
-		return (print_string(ap, fmt_substr));
+		return (print_string(ap, fmt_substr, flags));
 	i = (**fmt_substr != 'u') ? va_arg(ap, int) : va_arg(ap, unsigned int);
 
 	if ((base = get_base(**fmt_substr)) == 1)
@@ -358,6 +383,8 @@ int	main()
 	char	c = 'A';
 	unsigned int	u = 42;
 	int		bytes_printed;
+	char	*s2 = "Yolo!";
+
 
 	//ft_printf("Printf %% %is %ih %s and this is a number %i and a number also %d and this is a character: %c and this is an address %p\n", 5, 5, string, i, i, c, string);
 	//printf ("This is the address with native function: %p\n", string);
@@ -449,8 +476,8 @@ int	main()
 
 	//assert(ft_printf("%*i\n", i, i) == printf("%*i\n", i, i));
 
-
-
+	ft_printf("%10swoohoo!\n", s2);
+	printf("%10swoohoo!\n", s2);
 /*
 	ft_printf("% +i\n", i);
 	ft_printf("% +i\n", neg_i);

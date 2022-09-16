@@ -9,9 +9,10 @@
 
 typedef struct 	s_flags
 {
-	unsigned int    flags:5;
-	unsigned int    field_width;
+	unsigned int	flags:5;
+	unsigned int	field_width;
 	unsigned int	precision;
+	unsigned int	out_length;
 	unsigned int	x;
 }		t_flags;
 
