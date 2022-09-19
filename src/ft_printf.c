@@ -121,18 +121,15 @@ int	get_base(char c)
 	return (0);
 }
 
-int	print_start(t_flags *flags, int i)
+int	print_start(t_flags *flags, int i, int x)
 {
-	int	bytes;
-
-	bytes = 0;
 	if ((flags->flags == 8 || flags->flags == 16) && i < 0)
-		bytes = write(1, "-", 1);	
+		return ((x) ? write(1, "-", 1) : 1);	
 	if (flags->flags == 8 && i >= 0)
-		bytes = write(1, " ", 1);
+		return ((x) ? write(1, " ", 1) : 1);
 	if (flags->flags == 16 && i >= 0)
-		bytes = write(1, "+", 1);
-	return (bytes);
+		return ((x) ? write(1, "+", 1) : 1);
+	return (0);
 }
 
 char	*ft_strnew2(size_t size, int c)
@@ -146,27 +143,60 @@ char	*ft_strnew2(size_t size, int c)
 	return (str);
 }
 
-void	process_field_width(int width)
+int	process_field_width(int width, int x)
 {
 	char *blanks;
 
-	blanks = ft_strnew2(width, ' ');
+	if (x)
+		blanks = ft_strnew2(width, ' ');
+	else 
+		blanks = ft_strnew2(width, '0');
 	write(1, blanks, width);
 	free(blanks);
+	return (width);
 }
 
 int	print_string(va_list ap, char **fmt_substr, t_flags *flags)
 {
 	char	*s;
 	int	w_remain;
+	int	out_bytes;
 
 	s = va_arg(ap, char *);
+	out_bytes = 0;
 	(*fmt_substr)++;
 	flags->out_length = ft_strlen(s);
 	w_remain = flags->field_width - flags->out_length;
 	if (w_remain > 0)
-		process_field_width(w_remain);
-	return (ft_putstrl(s));
+		out_bytes += process_field_width(w_remain, 1);
+	return (out_bytes + ft_putstrl(s));
+}
+
+
+int	numlen_base(int i, int base)
+{
+	int	len;
+
+	len = 0;
+	while (i > 0)
+	{
+		++len;
+		i /=base;
+	}
+	return (len);
+}
+
+int	padding(t_flags *flags, int i, int base)
+{
+	int 	int_length;
+	int	out_bytes;
+
+	out_bytes = 0;
+	int_length = numlen_base(i, base);
+	int_length += print_start(flags, i, 0);
+	if (flags->field_width > int_length)
+		out_bytes = process_field_width(flags->field_width - int_length, 1);
+	return (out_bytes);
 }
 
 int	standard_dispatch(va_list ap, char **fmt_substr, t_flags *flags)
@@ -174,18 +204,18 @@ int	standard_dispatch(va_list ap, char **fmt_substr, t_flags *flags)
 	int		i;
 	unsigned int	u;
 	int		base;
+	int		out_b;
 
 	if (**fmt_substr == 's')
 		return (print_string(ap, fmt_substr, flags));
 	i = (**fmt_substr != 'u') ? va_arg(ap, int) : va_arg(ap, unsigned int);
-
 	if ((base = get_base(**fmt_substr)) == 1)
-		write(1, &i, 1);
-	else 
-		base = print_start(flags, i) + putnbr_base(i, base, 0, flags);
+		out_b = write(1, &i, 1);
+	else if ((out_b = padding(flags, i, base)) || 1)
+		out_b += print_start(flags, i, 1) + putnbr_base(i, base, 0, flags);
 	(*fmt_substr)++;
 	free (flags);
-	return (base);
+	return (out_b);
 }
 
 int	check_z(char *c)
@@ -256,9 +286,9 @@ t_flags		*get_t_flags(va_list ap, char *fmt_substr)
 	out = new_flag();
 	out->x = test_X(fmt_substr);
 	out->field_width = get_width(ap, fmt_substr);
-	printf("The field width is %i\n", out->field_width);
+	//printf("The field width is %i\n", out->field_width);
 	out->precision = get_precision(ap, fmt_substr);
-	printf("The precision is %i\n", out->precision);
+	//printf("The precision is %i\n", out->precision);
 	return (out);
 }
 
@@ -398,7 +428,7 @@ int	main()
 	/*
 		ft_printf must handle the cspdiuxX% flags. 
 	*/
-/*
+
 	assert(ft_printf("%s\n", string) == printf("%s\n", string));
 	assert(ft_printf("%d\n", i) == printf("%d\n", i));
 	assert(ft_printf("%X\n", i) == printf("%X\n", i));
@@ -412,7 +442,7 @@ int	main()
 	assert(ft_printf("%X\n", i) == printf("%X\n", i));
 	assert(ft_printf("%c\n", c) == printf("%c\n", c));
 	assert(ft_printf("%%\n") == printf("%%\n"));
-*/
+
 
 /*
 	printf("%p\n", NULL);
@@ -463,21 +493,24 @@ int	main()
 	assert(ft_printf("% i\n", neg_i3) == printf("% i\n", neg_i3));
 	*/
 // Time to test * and .* flags!!!
-	ft_printf("%*i\n", i, i);
-	ft_printf("%+*i\n", i, i);
-	ft_printf("% *i\n", i, i);
-	ft_printf("%-*i\n", i, i);
-	ft_printf("%.*i\n", i, i);
-	ft_printf("%+.*i\n", i, i);
-	ft_printf("%-.*i\n", i, i);
-	ft_printf("% .*i\n", i, i);
+	//ft_printf("%*i\n", i, i);
+	//ft_printf("%+*i\n", i, i);
+	//ft_printf("% *i\n", i, i);
+	//ft_printf("%-*i\n", i, i);
+	//ft_printf("%.*i\n", i, i);
+	//ft_printf("%+.*i\n", i, i);
+	//ft_printf("%-.*i\n", i, i);
+	//ft_printf("% .*i\n", i, i);
 	
 
+	assert(ft_printf("%*i\n", i, i) == printf("%*i\n", i, i));
 
-	//assert(ft_printf("%*i\n", i, i) == printf("%*i\n", i, i));
+/*	testing width and precision for strings		*/
 
-	ft_printf("%10swoohoo!\n", s2);
-	printf("%10swoohoo!\n", s2);
+	assert(ft_printf("%10swoohoo!\n", s2) == printf("%10swoohoo!\n", s2));
+
+
+
 /*
 	ft_printf("% +i\n", i);
 	ft_printf("% +i\n", neg_i);
@@ -511,12 +544,12 @@ int	main()
 ft_printf("% 500.10i\n", i);
 ft_printf("%+500.10i\n", i);
 ft_printf("%-500.10i\n", i);
-
+*/
 	assert(ft_printf("% 50.10i\n", i) == printf("% 50.10i\n", i));
 	assert(ft_printf("%+50.10i\n", i) == printf("%+50.10i\n", i));
 	assert(ft_printf("%-50.10i\n", i) == printf("%-50.10i\n", i));	
 
-*/
+
 	/*
 		ft_printf must handle '-0.* +' flags with minimum field width with all conversions. 
 	*/

@@ -31,5 +31,12 @@ int	main()
 	printf("%01.1i\n", i);	
 	printf("%10.5spoo\n", s);
 
+	// print a pointer address and then add spaces to it:
+
+	printf("%p\n", s);
+	printf("%15p\n", s);
+	printf("%#15x\n", (unsigned int)5000050);
+	
+	printf("%10.5i\n", 500);
 	return (0);
 }
