@@ -1,5 +1,24 @@
 #include <stdio.h>
 
+/* NOTES OF THINGS LEARNED:
+
+
+	1) %d and %i are one and the same in printf
+	2) This is true even when inputing hex/octal values
+	3) Zero padding wins over space padding. 
+	4) This means a width of 4 and an value 11 int and padding of 2 will print "0011"
+	4) Zero padding is only ever left padding
+	5) Space padding can be both left or right padded
+	6) %-5i will give right padding to min width of 5 
+	7) %5i will give left padding to min width of 5
+	8) %0.5i will give zeros left padding
+
+
+*/
+
+
+
+
 int	main()
 {
 	int	a;
@@ -38,5 +57,41 @@ int	main()
 	printf("%#15x\n", (unsigned int)5000050);
 	
 	printf("%10.5i\n", 500);
+
+	printf("%p\n", NULL);
+        printf("%p\n", NULL + 1);
+        printf("%p\n", NULL + 3);
+        printf("%p\n", NULL + 100);
+        printf("%p\n", NULL + 1000);
+        printf("%p\n", NULL + 10000);
+        printf("%p\n", NULL + 100000);
+        printf("%p\n", NULL + 1000000);
+        printf("%p\n", NULL + 10000000);
+        printf("%p\n", NULL + 100000000);
+        printf("%p\n", NULL + 1000000000);
+        printf("%p\n", NULL + 10000000000);
+        printf("%p\n", NULL + 100000000000);
+        printf("%p\n", NULL + 1000000000000);
+        printf("%p\n", NULL + 10000000000000);
+        printf("%p\n", NULL + 100000000000000);
+        printf("%p\n", NULL + 1000000000000000);
+        printf("%p\n", NULL + 10000000000000000);
+        printf("%p\n", NULL + 100000000000000000);
+	//printf("%-05i\n", 10);
+	printf("%i\n", 033);
+	printf("%d\n", 033);
+	printf("%-10.4iP\n", 033);
+	printf("%-4.4iP\n", 033);
+	printf("%-5.4iQ\n", 033);
+	printf("%0.4iX\n", 033);
+	
+
+	//Strings don't ever seem to be zero-paddable. You can pad them with spaces before and after and use width specifier. 
+	printf("%.7sP\n", s);
+	//What is this? When you use a %.s nothing is printed for the string. 
+	printf("%.sP\n", s);
+	//It doesn't do this when you try it with an %i format conversion flag:
+	printf("%.iP\n", 55);
+
 	return (0);
 }

@@ -18,6 +18,15 @@ Errors to handle:
 	-Would be nice to throw compiler errors but more likely just print error messages.
 */
 
+int	isConversion(char c)
+{
+	return (c == 'c' || c == 's' || \
+		c == 'p' || c == 'd' || \
+		c == 'i' || c == 'u' || \
+		c == 'x' || c == 'X' || \
+		c == 'f' );
+}
+
 int	ishash(t_flags *flags)
 {
 	return (flags->flags & 1);
@@ -123,8 +132,9 @@ int	get_base(char c)
 
 int	print_start(t_flags *flags, int i, int x)
 {
-	if ((flags->flags == 8 || flags->flags == 16) && i < 0)
-		return ((x) ? write(1, "-", 1) : 1);	
+	if (flags->flags == 4 || flags->flags == 8 || flags->flags == 16)
+		if (i < 0)
+			return ((x) ? write(1, "-", 1) : 1);
 	if (flags->flags == 8 && i >= 0)
 		return ((x) ? write(1, " ", 1) : 1);
 	if (flags->flags == 16 && i >= 0)
@@ -143,17 +153,20 @@ char	*ft_strnew2(size_t size, int c)
 	return (str);
 }
 
-int	process_field_width(int width, int x)
+int	process_field_width(int width)
 {
 	char *blanks;
 
-	if (x)
+	if (width > 0)
 		blanks = ft_strnew2(width, ' ');
-	else 
+	else
+	{
+		width = abso(width);
 		blanks = ft_strnew2(width, '0');
+	}
 	write(1, blanks, width);
 	free(blanks);
-	return (width);
+	return (abso(width));
 }
 
 int	print_string(va_list ap, char **fmt_substr, t_flags *flags)
@@ -168,16 +181,16 @@ int	print_string(va_list ap, char **fmt_substr, t_flags *flags)
 	flags->out_length = ft_strlen(s);
 	w_remain = flags->field_width - flags->out_length;
 	if (w_remain > 0)
-		out_bytes += process_field_width(w_remain, 1);
+		out_bytes += process_field_width(w_remain);
 	return (out_bytes + ft_putstrl(s));
 }
-
 
 int	numlen_base(int i, int base)
 {
 	int	len;
 
 	len = 0;
+	i = abso(i);
 	while (i > 0)
 	{
 		++len;
@@ -186,16 +199,25 @@ int	numlen_base(int i, int base)
 	return (len);
 }
 
-int	padding(t_flags *flags, int i, int base)
+int	test(t_flags *flags, int int_length, char cs)
+{
+	if ((cs == 'i' || cs == 'd') && flags->precision > int_length)
+		return (-1 * (flags->precision - int_length));
+	return (0);
+}
+
+int	padding(t_flags *flags, int i, int base, char cs)
 {
 	int 	int_length;
 	int	out_bytes;
+	int	w;
 
 	out_bytes = 0;
 	int_length = numlen_base(i, base);
 	int_length += print_start(flags, i, 0);
-	if (flags->field_width > int_length)
-		out_bytes = process_field_width(flags->field_width - int_length, 1);
+	w = flags->field_width - int_length;
+	if (w > 0 || (w = test(flags, int_length, cs)))
+		out_bytes = process_field_width(w);
 	return (out_bytes);
 }
 
@@ -211,7 +233,7 @@ int	standard_dispatch(va_list ap, char **fmt_substr, t_flags *flags)
 	i = (**fmt_substr != 'u') ? va_arg(ap, int) : va_arg(ap, unsigned int);
 	if ((base = get_base(**fmt_substr)) == 1)
 		out_b = write(1, &i, 1);
-	else if ((out_b = padding(flags, i, base)) || 1)
+	else if ((out_b = padding(flags, i, base, **fmt_substr)) || 1)
 		out_b += print_start(flags, i, 1) + putnbr_base(i, base, 0, flags);
 	(*fmt_substr)++;
 	free (flags);
@@ -256,15 +278,24 @@ int	get_width(va_list ap, char *str)
 	return ((*str == '*') ? va_arg(ap, int) : ft_atoi(str));
 }
 
+int	check_f(char *str)
+{
+	while (*str && *(str++) != 'f')
+		if (isConversion(*str))
+			break;
+	return (*str == 'f');
+}
+
 int	get_precision(va_list ap, char *str)
 {
 	while (*str && *str != '.')
 		str++;
 	if (*str && ft_isdigit(*++str))
-		return ((ft_atoi(str) == 0) ? 6 : ft_atoi(str));
+		if(!(check_f(str)))
+			return ((ft_atoi(str) == 0) ? 6 : ft_atoi(str));
 	if (*str == '*')
 		return (va_arg(ap, int));
-	return (6);
+	return (0);
 }
 
 t_flags		*new_flag(void)
@@ -416,18 +447,10 @@ int	main()
 	char	*s2 = "Yolo!";
 
 
-	//ft_printf("Printf %% %is %ih %s and this is a number %i and a number also %d and this is a character: %c and this is an address %p\n", 5, 5, string, i, i, c, string);
-	//printf ("This is the address with native function: %p\n", string);
-
-	//bytes_printed = ft_printf ("Here are all the standard conversions: %s %p %d %i %o %u %x %X %c\n", string, string, i, i, i, u, i, i, *string);
-	//printf ("Bytes printed were %i\n", bytes_printed);
-
-	//bytes_printed = printf ("Here are all the standard conversions: %s %p %d %i %o %u %x %X %c\n", string, string, i, i, i, u, i, i, *string);
-	//printf ("Bytes printed were %i\n", bytes_printed);
-
-	/*
-		ft_printf must handle the cspdiuxX% flags. 
-	*/
+/*
+	ft_printf must handle the cspdiuxX% flags. 
+	Basic cspdiuxX% tests here.
+*/
 
 	assert(ft_printf("%s\n", string) == printf("%s\n", string));
 	assert(ft_printf("%d\n", i) == printf("%d\n", i));
@@ -438,100 +461,60 @@ int	main()
 	assert(ft_printf("%i\n", i) == printf("%i\n", i));
 	assert(ft_printf("%o\n", i) == printf("%o\n", i));
 	assert(ft_printf("%u\n", u) == printf("%u\n", u));
+	//assert(ft_printf("%U\n", u) == printf("%U\n", u));
 	assert(ft_printf("%x\n", i) == printf("%x\n", i));
 	assert(ft_printf("%X\n", i) == printf("%X\n", i));
 	assert(ft_printf("%c\n", c) == printf("%c\n", c));
 	assert(ft_printf("%%\n") == printf("%%\n"));
 
-
 /*
-	printf("%p\n", NULL);
-	printf("%p\n", NULL + 1);
-	printf("%p\n", NULL + 3);
-	printf("%p\n", NULL + 100);
-	printf("%p\n", NULL + 1000);
-	printf("%p\n", NULL + 10000);	
-	printf("%p\n", NULL + 100000);
-	printf("%p\n", NULL + 1000000);
-	printf("%p\n", NULL + 10000000);
-	printf("%p\n", NULL + 100000000);
-	printf("%p\n", NULL + 1000000000);
-	printf("%p\n", NULL + 10000000000);
-	printf("%p\n", NULL + 100000000000);
-	printf("%p\n", NULL + 1000000000000);
-	printf("%p\n", NULL + 10000000000000);
-	printf("%p\n", NULL + 100000000000000);
-	printf("%p\n", NULL + 1000000000000000);
-	printf("%p\n", NULL + 10000000000000000);
-	printf("%p\n", NULL + 100 000 000 000 000 000);
-//	ft_printf("%p\n", NULL);
-
+	ft_printf must handle '-0.* +' flags with minimum field width with all conversions.
 */
-	/*
-		ft_printf must handle hH ll flags 
-	*/
 
-	//ft_printf("%ld\n", l);
-	//printf("%ld\n", l);
+	// A couple random width and precision specifier tests
+	assert(ft_printf("%*i\n", i, i) == printf("%*i\n", i, i));
+	assert(ft_printf("% 50.10i\n", i) == printf("% 50.10i\n", i));
+	assert(ft_printf("%+50.10i\n", i) == printf("%+50.10i\n", i));
+	assert(ft_printf("%-50.10i\n", i) == printf("%-50.10i\n", i));
 
-	//ft_printf("%+i\n", i);
-	/*
+	// Plus (+), Minus(-) and Space( ) tests with pos/neg ints of varying sizes
 	assert(ft_printf("%+i\n", i) == printf("%+i\n", i));
-
 	assert(ft_printf("%+i\n", neg_i) == printf("%+i\n", neg_i));
+	assert(ft_printf("%-i\n", i) == printf("%-i\n", i));
+	assert(ft_printf("%-i\n", neg_i) == printf("%-i\n", neg_i));
 	assert(ft_printf("% i\n", i) == printf("% i\n", i));
 	assert(ft_printf("% i\n", neg_i) == printf("% i\n", neg_i));
 
 	assert(ft_printf("%+i\n", i2) == printf("%+i\n", i2));
 	assert(ft_printf("%+i\n", neg_i2) == printf("%+i\n", neg_i2));
+	assert(ft_printf("%-i\n", i2) == printf("%-i\n", i2));
+	assert(ft_printf("%-i\n", neg_i2) == printf("%-i\n", neg_i2));
 	assert(ft_printf("% i\n", i2) == printf("% i\n", i2));
 	assert(ft_printf("% i\n", neg_i2) == printf("% i\n", neg_i2));
 
 	assert(ft_printf("%+i\n", i3) == printf("%+i\n", i3));
 	assert(ft_printf("%+i\n", neg_i3) == printf("%+i\n", neg_i3));
+	assert(ft_printf("%-i\n", i3) == printf("%-i\n", i3));
+	assert(ft_printf("%-i\n", neg_i3) == printf("%-i\n", neg_i3));
 	assert(ft_printf("% i\n", i3) == printf("% i\n", i3));
 	assert(ft_printf("% i\n", neg_i3) == printf("% i\n", neg_i3));
-	*/
+
 // Time to test * and .* flags!!!
-	//ft_printf("%*i\n", i, i);
-	//ft_printf("%+*i\n", i, i);
-	//ft_printf("% *i\n", i, i);
-	//ft_printf("%-*i\n", i, i);
-	//ft_printf("%.*i\n", i, i);
-	//ft_printf("%+.*i\n", i, i);
-	//ft_printf("%-.*i\n", i, i);
-	//ft_printf("% .*i\n", i, i);
-	
-
+// * and .* with +/-/ / flags
 	assert(ft_printf("%*i\n", i, i) == printf("%*i\n", i, i));
+	assert(ft_printf("%+*i\n", i, i) == printf("%+*i\n", i, i));
+	assert(ft_printf("% *i\n", i, i) == printf("% *i\n", i, i));
+	assert(ft_printf("%-*i\n", i, i) == printf("%-*i\n", i, i));
+	assert(ft_printf("%.*i\n", i, i) == printf("%.*i\n", i, i));
+	//assert(ft_printf("%+.*i\n", i, i) == printf("%+.*i\n", i, i));
+	assert(ft_printf("%-.*i\n", i, i) == printf("%-.*i\n", i, i));
+	//assert(ft_printf("% .*i\n", i, i) == printf("% .*i\n", i, i));
+	assert(ft_printf("%.*i\n", i, i) == printf("%.*i\n", i, i));
+// Tests of * and .* with 0 flags
+	//assert(ft_printf("%0*i\n", i, i) == printf("%0*i\n", i, i));
 
-/*	testing width and precision for strings		*/
-
-	assert(ft_printf("%10swoohoo!\n", s2) == printf("%10swoohoo!\n", s2));
 
 
-
-/*
-	ft_printf("% +i\n", i);
-	ft_printf("% +i\n", neg_i);
-	ft_printf("%+ i\n", i); 
-	ft_printf("%+ i\n", neg_i);
-
-	ft_printf("%+i\n", i);
-	ft_printf("%+i\n", neg_i);
-	ft_printf("% i\n", i);
-	ft_printf("% i\n", neg_i);
-
-	ft_printf("%+i\n", i2);
-	ft_printf("%+i\n", neg_i2);
-	ft_printf("% i\n", i2);
-	ft_printf("% i\n", neg_i2);
-
-	ft_printf("%+i\n", i3);
-	ft_printf("%+i\n", neg_i3);
-	ft_printf("% i\n", i3);
-	ft_printf("% i\n", neg_i3);
-*/
 
 /*	
 	printf("Tests for 0- precedence\n");
@@ -540,20 +523,6 @@ int	main()
 	ft_printf("%0-i\n", i);
 	ft_printf("%-0i\n", i);
 */
-/*
-ft_printf("% 500.10i\n", i);
-ft_printf("%+500.10i\n", i);
-ft_printf("%-500.10i\n", i);
-*/
-	assert(ft_printf("% 50.10i\n", i) == printf("% 50.10i\n", i));
-	assert(ft_printf("%+50.10i\n", i) == printf("%+50.10i\n", i));
-	assert(ft_printf("%-50.10i\n", i) == printf("%-50.10i\n", i));	
-
-
-	/*
-		ft_printf must handle '-0.* +' flags with minimum field width with all conversions. 
-	*/
-
 
 	//Successfully passed tests message:
 	printf("\n\n\t\t##########################################\n\t\t#  Congratulations!!! All Tests Passed!  #\n\t\t##########################################\n\n\n");
