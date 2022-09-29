@@ -93,5 +93,15 @@ int	main()
 	//It doesn't do this when you try it with an %i format conversion flag:
 	printf("%.iP\n", 55);
 
+	printf("%-4.6i\n", i);
+	printf("%4.6i\n", i);
+	
+	printf("%6.4i\n", i);
+	printf("%6.2i\n", i);
+	
+	printf("%i\n", -i);
+	printf("%+.*i\n", 5, -5);
+	printf("%+*i\n", 5, -5);
+	printf("%-*iP\n", 5, -5);
 	return (0);
 }
