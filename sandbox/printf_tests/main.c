@@ -103,5 +103,24 @@ int	main()
 	printf("%+.*i\n", 5, -5);
 	printf("%+*i\n", 5, -5);
 	printf("%-*iP\n", 5, -5);
+	printf("%+*i\n", 5, 5);
+	printf("%-i\n", 5);
+	printf("%+i\n", 5);
+	printf("% i\n", 5);
+	printf("% i\n", -5);	
+	printf("% .2i\n", 5);
+	printf("% 2i\n", 5);
+	printf("% 5.2i\n", 5);
+	printf("% 5.2i\n", -5);
+	printf("%-5.2i\n", -5);
+
+
+
+	printf("%c\n", 65);
+	//printf("% c\n", c);
+	//printf("%5.5c\n", c);
+	//printf("%.*c\n", 5, c);
+
+
 	return (0);
 }
