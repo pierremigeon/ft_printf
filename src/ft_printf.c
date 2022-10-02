@@ -72,7 +72,7 @@ int	test_ls(char fmt_substr)
 	return ( fmt_substr == 'S' || fmt_substr == 'C' || \
 		 fmt_substr == 'D' || fmt_substr == 'O' ||	\
 		 fmt_substr == 'U'
-	       );
+	);
 }
 
 int	get_base(char c)
@@ -162,8 +162,14 @@ int	print_string(va_list ap, char **fmt_substr, t_flags *flags)
 	else
 		flags->out_length = w_remain;
 	w_remain = flags->field_width - flags->out_length;
-	if (w_remain > 0)
+	if (w_remain > 0 && flags->flags ^ 4)
 		out_bytes += process_field_width(w_remain, 0, 0, flags);
+	else if (w_remain > 0)
+	{
+		out_bytes += ft_putstrnl(s, flags->precision[0]);
+		out_bytes += process_field_width(w_remain, 0, 0, flags);
+		return (out_bytes);
+	}
 	return (out_bytes + ft_putstrnl(s, flags->precision[0]));
 }
 
@@ -529,6 +535,7 @@ for (int x = -1; x < 257; x++) {
 
 	assert(ft_printf("%c\n", x) == printf("%c\n", x));
 	for (int y = 5; y < 31; y *= 6) {
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~x is %i and y is %i\n", x, y);
 		test = ft_strnew2(y, x);
 		assert(ft_printf("%s\n", test) == printf("%s\n", test));
 		assert(ft_printf("%.0s\n", test) == printf("%.0s\n", test));
@@ -537,7 +544,6 @@ for (int x = -1; x < 257; x++) {
 		assert(ft_printf("%.3s\n", test) == printf("%.3s\n", test));
 		assert(ft_printf("%.4s\n", test) == printf("%.4s\n", test));
 		assert(ft_printf("%.5s\n", test) == printf("%.5s\n", test));
-		assert(ft_printf("%.0s\n", test) == printf("%.0s\n", test));
 		assert(ft_printf("%1s\n", test) == printf("%1s\n", test));
 		assert(ft_printf("%2s\n", test) == printf("%2s\n", test));
 		assert(ft_printf("%3s\n", test) == printf("%3s\n", test));
@@ -549,6 +555,23 @@ for (int x = -1; x < 257; x++) {
 	}
 }
 
+	// Some more precision and field width tests with (-) flag
+	assert(ft_printf("%5.2sP\n", string) == printf("%5.2sP\n", string));
+	assert(ft_printf("%-5.2sP\n", string) == printf("%-5.2sP\n", string));
+	assert(ft_printf("%-5.6sP\n", string) == printf("%-5.6sP\n", string));
+	assert(ft_printf("%-2.2sP\n", string) == printf("%-2.2sP\n", string));
+	
+
+	//Some tests for precision and field width using .* and *:
+	assert(ft_printf("%*.2sP\n", i, string) == printf("%*.2sP\n", i, string));
+	assert(ft_printf("%-*.2sP\n", i, string) == printf("%-*.2sP\n", i, string));
+	assert(ft_printf("%-*.6sP\n", i, string) == printf("%-*.6sP\n", i, string));
+	assert(ft_printf("%-*.2sP\n", 2, string) == printf("%-*.2sP\n", 2, string));
+	
+	assert(ft_printf("%.*sP\n", i, string) == printf("%.*sP\n", i, string));
+	assert(ft_printf("%-.*sP\n", i, string) == printf("%-.*sP\n", i, string));
+	assert(ft_printf("%-.*sP\n", 2, string) == printf("%-.*sP\n", 2, string));
+	assert(ft_printf("%-.*sP\n", 50, string) == printf("%-.*sP\n", 50, string));
 
 
 

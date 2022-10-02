@@ -113,7 +113,6 @@ int	main()
 	printf("%-5.2i\n", -5);
 
 
-
 	printf("%c\n", -1);
 	//printf("% c\n", c);
 	//printf("%5.5c\n", c);
@@ -129,7 +128,18 @@ int	main()
 	printf("%.0s\n", s);
 
 	printf("%6.4s\n", s);
-
 	printf("%0*d\n", i, i);
+
+	printf("%-6.2sP\n", s);
+	printf("%-6.10sP\n", s);
+
+//Strings %s not compatible with ' '+0 flags
+
+	printf("%*.2sP\n", i, s);
+	printf("%*.10sP\n", i, s);
+	
+	printf("%.*sP\n", i, s);
+	printf("%.*sP\n", i, s);
+	
 	return (0);
 }
