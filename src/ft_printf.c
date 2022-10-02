@@ -2,19 +2,6 @@
 
 #include <assert.h>
 
-/*
-
-Any flags past the type converion are just treated as characters to print:
-	printf ("%is", 5); prints "5s"
-	printf ("%ih", 5); prints "5h"
-
-Errors to handle:
-	-input isn't type specified 
-	-unequal number of arguments and conversing specifiers 
-	-nonsensical combinations of input? %hhll 
-	-Would be nice to throw compiler errors but more likely just print error messages.
-*/
-
 int	isConversion(char c)
 {
 	return (c == 'c' || c == 's' || \
@@ -87,27 +74,6 @@ int	test_ls(char fmt_substr)
 		 fmt_substr == 'U'
 	       );
 }
-
-/*
-
-just stubbing...
-
-int	dispatch_l(va_list ap, char **fmt_substr)
-{
-}
-
-int     dispatch_ll(va_list ap, char **fmt_substr)
-{
-}
-
-	%hlhllc throw an error
-	What does %lC do?
-	-cannot combine any of the length modifiers
-	-cannot do %lC or %lS
-	-%lD is just a long
-	-%lO is unsigned long
-	-%lU is unsigned long
-*/
 
 int	get_base(char c)
 {
@@ -188,11 +154,17 @@ int	print_string(va_list ap, char **fmt_substr, t_flags *flags)
 	s = va_arg(ap, char *);
 	out_bytes = 0;
 	(*fmt_substr)++;
-	flags->out_length = ft_strlen(s);
+	w_remain =  ft_strlen(s);
+	if (flags->precision[1] == 0)
+		flags->precision[0] = w_remain;
+	if (flags->precision[0] < w_remain)
+		flags->out_length = flags->precision[0];
+	else
+		flags->out_length = w_remain;
 	w_remain = flags->field_width - flags->out_length;
 	if (w_remain > 0)
 		out_bytes += process_field_width(w_remain, 0, 0, flags);
-	return (out_bytes + ft_putstrl(s));
+	return (out_bytes + ft_putstrnl(s, flags->precision[0]));
 }
 
 int	numlen_base(int i, int base)
@@ -215,9 +187,9 @@ int	numlen_base(int i, int base)
 
 int	test(t_flags *flags, int int_length, char cs, int neg)
 {
-	if ((cs == 'i' || cs == 'd') && flags->precision)
-		if (flags->precision > int_length + neg)
-			return (-1 * (flags->precision - int_length + neg));
+	if ((cs == 'i' || cs == 'd') && flags->precision[0])
+		if (flags->precision[0] > int_length + neg)
+			return (-1 * (flags->precision[0] - int_length + neg));
 	return (0);
 }
 
@@ -232,7 +204,7 @@ int	get_w(t_flags *flags, int int_length, char cs, int neg)
 
 	if (!neg && test_flag(flags->flags))
 		neg = 1;
-	larger = (flags->precision + neg > int_length) ? flags->precision + neg : int_length;
+	larger = (flags->precision[0] + neg > int_length) ? flags->precision[0] + neg : int_length;
 	if (flags->flags ^ 4 && flags->field_width > larger)
 		return (flags->field_width - larger);
 	return (test(flags, int_length, cs, neg));
@@ -251,7 +223,7 @@ int	padding(t_flags *flags, int i, int base, char cs)
 	while ((w = get_w(flags, int_length, cs, i < 0)) && ++x)
 	{
 		if (w < 0)
-			flags->precision = 0;
+			flags->precision[0] = 0;
 		out_bytes += process_field_width(w, x, i, flags);
 		if (flags->flags ^ 4)
 			flags->field_width = 0;
@@ -332,18 +304,37 @@ int	check_f(char *str)
 	return (*str == 'f');
 }
 
-int	get_precision(va_list ap, char *str)
+unsigned int *new_uint_array(int i)
 {
+	unsigned int *new;
+
+	if(!(new = (unsigned int *)malloc(sizeof(unsigned int) * i)))
+		exit(1);
+	while (i > 0)
+		new[--i] = 0;
+	return (new);
+}
+
+unsigned int	*get_precision(va_list ap, char *str)
+{
+	unsigned int *out;
+	int	temp;
+
+	out = new_uint_array(2);
 	while (*str && *str != '.')
 		str++;
-	if (*str && ft_isdigit(*++str))
-		if(!(check_f(str)))
-			return (ft_atoi(str));
+	if (*str && (str += 1))
+		temp = ft_atoi(str);
+	if (*str && ft_isdigit(*str) && !(check_f(str)))
+		if((out[0] = temp) || 1)
+			out[1] = 1;
 	if (*str == '*')
-		return (va_arg(ap, int));
+		if((out[0] = va_arg(ap, int)) || 1)
+			out[1] = 1;
 	if (check_f(str) && ft_isdigit(*str))
-		return ((ft_atoi(str) == 0) ? 6 : ft_atoi(str));
-	return (0);
+		if ((out[0] = (temp == 0) ? 6 : temp) || 1)
+			out[1] = 1;
+	return (out);
 }
 
 t_flags		*new_flag(void)
@@ -366,7 +357,7 @@ t_flags		*get_t_flags(va_list ap, char *fmt_substr)
 	out->x = test_X(fmt_substr);
 	out->field_width = get_width(ap, fmt_substr);
 	out->precision = get_precision(ap, fmt_substr);
-	if (out->precision > out->field_width && !(check_f(fmt_substr)))
+	if (out->precision[0] > out->field_width && !(check_f(fmt_substr)))
 		out->field_width = 0;
 	return (out);
 }
@@ -492,8 +483,9 @@ int	main()
 	char	c = 'A';
 	unsigned int	u = 42;
 	int		bytes_printed;
-	char	*s2 = "Yolo!";
+	char	*s2 = "YoLo";
 
+	ft_printf("%.0s\n", s2);
 	ft_printf("%+.*i\n", i, i);
 
 	printf("%+50.10i\n", i);
@@ -507,8 +499,8 @@ int	main()
 	printf("%i\n", ft_printf("%-i\n", neg_i));
 
 /*
-	ft_printf must handle the cspdiuxX% flags.
-	Basic cspdiuxX% tests here.
+	ft_printf must handle the cspdioOuUxX% flags.
+	Basic cspdioOuxX% tests here.
 */
 
 	assert(ft_printf("%s\n", string) == printf("%s\n", string));
@@ -519,6 +511,7 @@ int	main()
 	assert(ft_printf("%d\n", i) == printf("%d\n", i));
 	assert(ft_printf("%i\n", i) == printf("%i\n", i));
 	assert(ft_printf("%o\n", i) == printf("%o\n", i));
+	//assert(ft_printf("%O\n", i) == printf("%O\n", i));
 	assert(ft_printf("%u\n", u) == printf("%u\n", u));
 	//assert(ft_printf("%U\n", u) == printf("%U\n", u));
 	assert(ft_printf("%x\n", i) == printf("%x\n", i));
@@ -527,13 +520,35 @@ int	main()
 	assert(ft_printf("%%\n") == printf("%%\n"));
 
 /*
-	Tests for char %c here
+	Tests for char %c and string %s here
 	develop the %lc tests also, which is the same thing as %C
 */
 
-for (int x = 0; x < 256; x++) {
+for (int x = -1; x < 257; x++) {
+	char *test;
+
 	assert(ft_printf("%c\n", x) == printf("%c\n", x));
+	for (int y = 5; y < 31; y *= 6) {
+		test = ft_strnew2(y, x);
+		assert(ft_printf("%s\n", test) == printf("%s\n", test));
+		assert(ft_printf("%.0s\n", test) == printf("%.0s\n", test));
+		assert(ft_printf("%.1s\n", test) == printf("%.1s\n", test));
+		assert(ft_printf("%.2s\n", test) == printf("%.2s\n", test));
+		assert(ft_printf("%.3s\n", test) == printf("%.3s\n", test));
+		assert(ft_printf("%.4s\n", test) == printf("%.4s\n", test));
+		assert(ft_printf("%.5s\n", test) == printf("%.5s\n", test));
+		assert(ft_printf("%.0s\n", test) == printf("%.0s\n", test));
+		assert(ft_printf("%1s\n", test) == printf("%1s\n", test));
+		assert(ft_printf("%2s\n", test) == printf("%2s\n", test));
+		assert(ft_printf("%3s\n", test) == printf("%3s\n", test));
+		assert(ft_printf("%4s\n", test) == printf("%4s\n", test));
+		assert(ft_printf("%5s\n", test) == printf("%5s\n", test));
+		assert(ft_printf("%8s\n", test) == printf("%8s\n", test));
+		assert(ft_printf("%15s\n", test) == printf("%15s\n", test));
+		free(test);
+	}
 }
+
 
 
 
@@ -620,24 +635,24 @@ for (int x = 0; x < 256; x++) {
 
 
 	// A couple random width and precision specifier tests
-	assert(ft_printf("%*i\n", i, i) == printf("%*i\n", i, i));
-	assert(ft_printf("% 50.10i\n", i) == printf("% 50.10i\n", i));
-	assert(ft_printf("%+50.10i\n", i) == printf("%+50.10i\n", i));
-	assert(ft_printf("%-50.10i\n", i) == printf("%-50.10i\n", i));
+	assert(ft_printf("%*d\n", i, i) == printf("%*d\n", i, i));
+	assert(ft_printf("% 50.10d\n", i) == printf("% 50.10d\n", i));
+	assert(ft_printf("%+50.10d\n", i) == printf("%+50.10d\n", i));
+	assert(ft_printf("%-50.10d\n", i) == printf("%-50.10d\n", i));
 
 	// Plus (+), Minus(-) and Space( ) tests with pos/neg ints of varying sizes
 	assert(ft_printf("%+d\n", i) == printf("%+d\n", i));
 	assert(ft_printf("%+d\n", neg_i) == printf("%+d\n", neg_i));
 	assert(ft_printf("%-d\n", i) == printf("%-d\n", i));
 	assert(ft_printf("%-d\n", neg_i) == printf("%-d\n", neg_i));
-	assert(ft_printf("% i\n", i) == printf("% d\n", i));
+	assert(ft_printf("% d\n", i) == printf("% d\n", i));
 	assert(ft_printf("% d\n", neg_i) == printf("% d\n", neg_i));
 
 	assert(ft_printf("%+d\n", i2) == printf("%+d\n", i2));
 	assert(ft_printf("%+d\n", neg_i2) == printf("%+d\n", neg_i2));
 	assert(ft_printf("%-d\n", i2) == printf("%-d\n", i2));
 	assert(ft_printf("%-d\n", neg_i2) == printf("%-d\n", neg_i2));
-	assert(ft_printf("% i\n", i2) == printf("% d\n", i2));
+	assert(ft_printf("% d\n", i2) == printf("% d\n", i2));
 	assert(ft_printf("% d\n", neg_i2) == printf("% d\n", neg_i2));
 
 	assert(ft_printf("%+d\n", i3) == printf("%+d\n", i3));
@@ -653,29 +668,29 @@ for (int x = 0; x < 256; x++) {
 
 	// Test (-) flag with varying field widths
 	printf("*~~~*\n");
-	printf("%-5i%s\n", i, "words");	
-	ft_printf("%-5i%s\n", i, "words");
-	printf("%-5.5i%s\n", i, "words");
-	ft_printf("%-5.5i%s\n", i, "words");
-	printf("%-8.5i%s\n", i, "words");
-	ft_printf("%-8.5i%s\n", i, "words");
-	printf("%8.5i%s\n", i, "words");
-	ft_printf("%8.5i%s\n", i, "words");
+	printf("%-5d%s\n", i, "words");	
+	ft_printf("%-5d%s\n", i, "words");
+	printf("%-5.5d%s\n", i, "words");
+	ft_printf("%-5.5d%s\n", i, "words");
+	printf("%-8.5d%s\n", i, "words");
+	ft_printf("%-8.5d%s\n", i, "words");
+	printf("%8.5d%s\n", i, "words");
+	ft_printf("%8.5d%s\n", i, "words");
 	printf("*~~~*\n");
 
 //Test Plus (+), Minus(-) and Space( ) flags with strings
 
 // Time to test * and .* flags!!!
 // * and .* with +/-/ / flags
-	assert(ft_printf("%*i\n", i, i) == printf("%*i\n", i, i));
-	assert(ft_printf("%+*i\n", i, i) == printf("%+*i\n", i, i));
-	assert(ft_printf("% *i\n", i, i) == printf("% *i\n", i, i));
-	assert(ft_printf("%-*i\n", i, i) == printf("%-*i\n", i, i));
-	assert(ft_printf("%.*i\n", i, i) == printf("%.*i\n", i, i));
-	assert(ft_printf("%+.*i\n", i, i) == printf("%+.*i\n", i, i));
-	assert(ft_printf("%-.*i\n", i, i) == printf("%-.*i\n", i, i));
-	assert(ft_printf("% .*i\n", i, i) == printf("% .*i\n", i, i));
-	assert(ft_printf("%.*i\n", i, i) == printf("%.*i\n", i, i));
+	assert(ft_printf("%*d\n", i, i) == printf("%*d\n", i, i));
+	assert(ft_printf("%+*d\n", i, i) == printf("%+*d\n", i, i));
+	assert(ft_printf("% *d\n", i, i) == printf("% *d\n", i, i));
+	assert(ft_printf("%-*d\n", i, i) == printf("%-*d\n", i, i));
+	assert(ft_printf("%.*d\n", i, i) == printf("%.*d\n", i, i));
+	assert(ft_printf("%+.*d\n", i, i) == printf("%+.*d\n", i, i));
+	assert(ft_printf("%-.*d\n", i, i) == printf("%-.*d\n", i, i));
+	assert(ft_printf("% .*d\n", i, i) == printf("% .*d\n", i, i));
+	assert(ft_printf("%.*d\n", i, i) == printf("%.*d\n", i, i));
 
 //// * and .* with +/-/ / flags using a long
 	//assert(ft_printf("%*li\n", i, l) == printf("%*li\n", i, l));
@@ -691,7 +706,7 @@ for (int x = 0; x < 256; x++) {
 
 
 // Tests of * and .* with 0 flags
-	assert(ft_printf("%0*i\n", i, i) == printf("%0*i\n", i, i));
+	assert(ft_printf("%0*d\n", i, i) == printf("%0*d\n", i, i));
 
 
 

@@ -17,15 +17,13 @@
 */
 
 
-
-
 int	main()
 {
 	int	a;
 
 	a = -500;
 
-	int	i = 55;
+	int	i = 5;
 	char	c = 'a';
 	char	*s = "yolo";
 
@@ -116,11 +114,22 @@ int	main()
 
 
 
-	printf("%c\n", 65);
+	printf("%c\n", -1);
 	//printf("% c\n", c);
 	//printf("%5.5c\n", c);
 	//printf("%.*c\n", 5, c);
 
 
+	//String stuff
+	printf("%s\n", s);
+	printf("%.2s\n", s);
+	printf("%5s\n", s);
+	printf("%5.2s\n", s);
+	printf("%.10s\n", s);
+	printf("%.0s\n", s);
+
+	printf("%6.4s\n", s);
+
+	printf("%0*d\n", i, i);
 	return (0);
 }
