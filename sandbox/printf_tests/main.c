@@ -140,6 +140,25 @@ int	main()
 	
 	printf("%.*sP\n", i, s);
 	printf("%.*sP\n", i, s);
+
+	printf("%05i\n", 5);
+	printf("%08.6i\n", 5);
 	
+	printf("%0.*d\n", 0,0);
+	printf("%1.2i\n", 0);
+	printf("%+0.0iP\n", 0);
+	printf("%0.1i\n", 0);
+	printf("%0.2i\n", 0);
+	printf("%1.0i\n", 0);
+	printf("%1.1i\n", 0);
+	printf("%1.2i\n", 0);
+	printf("%1.1i\n", 1);
+	printf("%1.2i\n", 1);
+	printf("%1.3i\n", 1);
+
+	printf("%i\n", 0);
+	printf("%5.0i\n", 0);
+	printf("% 5.0i\n", 0);
+		
 	return (0);
 }
