@@ -35,7 +35,7 @@ edit_h:
 clean:
 	@echo "Cleaning up files"
 	@rm ./$(OUT)
-	@if [ -e $(OUT).dSYM ]; then rm -rf $(OUT).dSYM; fi
+	@if [ -e $(OUT).dSYM ]; then rm -rf $(OUT).dSYM && echo "Cleaning up debugger files"; fi
 	@echo "Cleaning up libft"
 	@make clean -C libft
 
@@ -47,3 +47,8 @@ fclean:
 	@make fclean -C libft
 
 re: fclean all
+
+runwords:
+	$(MAKE) -C printf_tests words
+
+
