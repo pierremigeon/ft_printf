@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <limits.h>
+
 
 /* NOTES OF THINGS LEARNED:
 
@@ -24,8 +26,12 @@ int	main()
 	a = -500;
 
 	int	i = 5;
+	float	f = 5.78;
+	float	f2 = 0.78;
+	float	f3 = 0;
 	char	c = 'a';
 	char	*s = "yolo";
+	long	l = INT_MAX;
 
 	/*
 		printf ("%x\n", a);
@@ -160,5 +166,36 @@ int	main()
 	printf("%5.0i\n", 0);
 	printf("% 5.0i\n", 0);
 		
+	printf("%-f\n", f);
+	printf("% f\n", f);
+	printf("%+f\n", f);
+	printf("%0f\n", f);
+	printf("%f\n", f);
+	printf("%#f\n", f);
+
+	printf("%-10.2fQ\n", f);
+	printf("%10.2fQ\n", f);
+	
+	//Can characters have padding and the like?
+	printf("%c\n", c);
+	printf("%5c\n", c);
+	printf("%-5cP\n", c);
+	printf("%5c\n", c);
+
+	//zero with zero padding prints nothing
+	printf("%.0i\n", 0);
+
+	// experimenting with what float output is like: what about float output of zero?
+	printf("%05.1f\n", f3);
+	printf("%05.2f\n", f3);
+	printf("%-5.1f\n", f3);
+	printf("%-5.2f\n", f3);
+	
+	printf("%f\n", f3);
+
+	//down-casting from long to int, does this cause overflow?
+	printf("%i\n", (int)(l + 1));
+
+
 	return (0);
 }

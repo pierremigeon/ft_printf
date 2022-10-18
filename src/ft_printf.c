@@ -77,10 +77,8 @@ int	test_ls(char fmt_substr)
 
 int	get_base(char c)
 {
-	if (c == 'i' || c == 'd' || c == 'u')
+	if (c == 'i' || c == 'd' || c == 'u' || c == 'f')
 		return (10);
-	if (c == 'c')
-		return (1);
 	if (c == 'x' || c == 'X' || c == 'p')
 		return (16);
         if (c == 'o')
@@ -145,13 +143,28 @@ int	process_field_width(int width, int x, int i, t_flags *flags)
 	return (width);
 }
 
+char	*get_string(va_list ap, char **fmt_substr)
+{
+	char	*s;
+	char	c;
+
+	if (**fmt_substr == 's')
+		return (va_arg(ap, char *));
+	c = va_arg(ap, int);
+	if (!(s = (char *)malloc(sizeof(char) * 2)))
+		exit(1);
+	ft_bzero(s, 2);
+	s[0] = c;
+	return (s);
+}
+
 int	print_string(va_list ap, char **fmt_substr, t_flags *flags)
 {
 	char	*s;
 	int	w_remain;
 	int	out_bytes;
 
-	s = va_arg(ap, char *);
+	s = get_string(ap, fmt_substr);
 	out_bytes = 0;
 	(*fmt_substr)++;
 	w_remain =  ft_strlen(s);
@@ -250,28 +263,97 @@ int	padding(t_flags *flags, int i, int base, char cs)
 	return (out_bytes);
 }
 
-
 void	free_t_flags(t_flags *flags)
 {
 	free(flags->precision);
 	free(flags);
 }
 
+void	write_zeros(int i, int seen)
+{
+	char *start;
+	char *str;
+	char *fused;
+
+	start = ft_strnew2(seen, '0');
+	str = ft_strnew2(i, '0');
+	fused = ft_strjoin_free(start, str, '.');
+
+	write(1, fused, ++i + seen);
+	free(str);
+	free(fused);
+}
+
+int	x_to_power_of_y(int x, int y)
+{
+	int out;
+
+	out = 1;
+	for (int i = 0; i < y; i++)
+		out *= x;
+	return (out);
+}
+
+int	proc_fi(double *f, int i, char fmt_c, t_flags *flags)
+{
+	int temp;
+
+	if ((flags->new == 1 || flags->new == 2) && (flags->new = 2))
+		return (0);
+	if (fmt_c == 'f' && *f < 1)
+	{
+		*f *= x_to_power_of_y(10, (long int)*flags->precision);
+		temp = *f;
+		if (*flags->precision == 0)
+			return (!(flags->new = 2));
+		(*f == 0) ? write_zeros(*flags->precision, flags->new == 0) : write(1, ".", 1);
+		flags->new = 1;
+		return (temp);
+	} else if (fmt_c == 'f') {
+		temp = *f;
+		*f -= temp;
+		return (temp);
+	}
+	if (fmt_c != 'f')
+		flags->new = 1;
+	return (i);
+}
+
+int	vzed(t_flags *flags)
+{
+	if (flags->new == 2)
+		return (0);
+	if (flags->new == 1)
+		flags->new = 2; 
+	return(1);
+}
+
+void	define_numbers(va_list ap, int *i, double *f, char fmt_c)
+{
+	if (fmt_c == 'i' || fmt_c == 'd' || fmt_c == 'u' || fmt_c == 'X')
+		*i = (fmt_c != 'u') ? va_arg(ap, int) : va_arg(ap, unsigned int);
+	else if (fmt_c == 'f')
+		*f = va_arg(ap, double);
+}
+
 int	standard_dispatch(va_list ap, char **fmt_substr, t_flags *flags)
 {
 	int		i;
 	unsigned int	u;
+	double		f;
 	int		base;
 	int		out_b;
 
-	if (**fmt_substr == 's')
+	if (**fmt_substr == 's' || **fmt_substr == 'c')
 		return (print_string(ap, fmt_substr, flags));
-	i = (**fmt_substr != 'u') ? va_arg(ap, int) : va_arg(ap, unsigned int);
-	if ((base = get_base(**fmt_substr)) == 1)
-		out_b = write(1, &i, 1);
-	else if ((out_b = padding(flags, i, base, **fmt_substr)) || 1)
-		if (exclusion_test(flags, i))
-			out_b += putnbr_base(i, base, 0, flags);
+	define_numbers(ap, &i, &f, **fmt_substr);
+	base = get_base(**fmt_substr);
+	while ((i = proc_fi(&f, i, **fmt_substr, flags)) || vzed(flags))
+	{
+		if ((out_b = padding(flags, i, base, **fmt_substr)) || 1)
+			if (exclusion_test(flags, i))
+				out_b += putnbr_base(i, base, 0, flags);
+	}
 	if (flags->field_width)
 		out_b += padding(flags, 1, 0, **fmt_substr);
 	(*fmt_substr)++;
@@ -327,6 +409,8 @@ int	get_width(va_list ap, char *str)
 
 int	check_f(char *str)
 {
+	if (*str == 'f')
+		return (1);
 	while (*str && *(str++) != 'f')
 		if (isConversion(*str))
 			break;
@@ -349,19 +433,23 @@ unsigned int	*get_precision(va_list ap, char *str)
 	unsigned int *out;
 	int	temp;
 
+	temp = -1;
 	out = new_uint_array(2);
-	while (*str && *str != '.')
+	while (*str && *str != '.' && (ft_isdigit(*str) || *str == '*'))
 		str++;
-	if (*str && (str += 1))
+	if (*str == '.' && (str += 1))
+	{
 		temp = ft_atoi(str);
-	if (*str && ft_isdigit(*str) && !(check_f(str)))
 		if((out[0] = temp) || 1)
 			out[1] = 1;
+	}
+	while (*str && ft_isdigit(*str))
+		str++;
 	if (*str == '*')
 		if((out[0] = va_arg(ap, int)) || 1)
 			out[1] = 1;
-	if (check_f(str) && ft_isdigit(*str))
-		if ((out[0] = (temp == 0) ? 6 : temp) || 1)
+	if (check_f(str))
+		if ((out[0] = (temp == -1) ? 6 : out[0]) || 1)
 			out[1] = 1;
 	return (out);
 }
@@ -386,6 +474,7 @@ t_flags		*get_t_flags(va_list ap, char *fmt_substr)
 	out->x = test_X(fmt_substr);
 	out->field_width = get_width(ap, fmt_substr);
 	out->precision = get_precision(ap, fmt_substr);
+	out->new = 0;
 	if (out->precision[0] > out->field_width && !(check_f(fmt_substr)))
 		out->field_width = 0;
 	return (out);

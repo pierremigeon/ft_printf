@@ -8,16 +8,16 @@ make:
 	gcc $(MAIN) $(SRC) $(LIB) -o $(OUT)
 
 runtest:
-	gcc -g $(SRC) $(LIB) -o $(OUT)
+	gcc -g $(MAIN) $(SRC) $(LIB) -o $(OUT)
 	lldb ft_printf
 
 assert_test:
 	@if [ ! -e ./$(OUT) ]; then make -C .; fi
-	@./$(OUT) > ./testing/assert_test_output_raw.txt
+	@./$(OUT) > ./test_suite/assert_test_output_raw.txt
 	@make run_compare -C testing
 
 refresh:
-	@./$(OUT) > ./testing/assert_test_output_raw.txt
+	@./$(OUT) > ./test_suite/assert_test_output_raw.txt
 	
 clean:
 	@echo "removing executable"
@@ -26,6 +26,8 @@ clean:
 
 edit:
 	vi $(SRC)
+edit_m:
+	vi $(MAIN)
 
 edit_h:
 	vi ./includes/$(OUT).h

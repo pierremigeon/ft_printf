@@ -14,6 +14,7 @@ typedef struct 	s_flags
 	unsigned int	*precision;
 	unsigned int	out_length;
 	unsigned int	x;
+	unsigned int	new;
 }		t_flags;
 
 typedef int     (*t_dispatcher)(va_list ap, char **fmt_substr, t_flags *flags);

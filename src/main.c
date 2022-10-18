@@ -16,8 +16,17 @@ int	main()
 	unsigned int	u = 42;
 	int		bytes_printed;
 	char	*s2 = "YoLo";
+	float	f = 3.14;
+	float	zero = 0;
 
 	setbuf(stdout, NULL);
+	
+	ft_printf("%0*d\n", 0, 0);
+
+	ft_printf("%f\n", f);
+	ft_printf("%f\n", zero);
+	ft_printf("%5.8f\n", zero);
+	ft_printf("%5.8f\n", f);
 
 	//ft_printf("% 50.10i\n", i);
 
@@ -274,12 +283,41 @@ for (int x = 32; x < 127; x++) {
 
 
 /*
+	the original printf throws an error if you try to run these two flags together. For this, I plan to implement a checker to verify the validity of the string, and exit with error message if invalid string is used. This will immitate the native function. 
 	printf("Tests for 0- precedence\n");
 	assert(ft_printf("%-i\n", i) == printf("%-i\n", i));
 	assert(ft_printf("%0i\n", i) == printf("%0i\n", i));
 	ft_printf("%0-i\n", i) == printf("%0-i\n", i));
 	ft_printf("%-0i\n", i);
 */
+
+
+/*
+	float tests!!!! Project is developing nicely.
+*/
+
+
+// Tests of * and .* with 0 flags
+//	for (int a = 0; a < 100; a++) {
+//		assert(ft_printf("%0*f\n", a, f) == printf("%0*f\n", a, f));
+//		assert(ft_printf("%0.*f\n", a, f) == printf("%0.*f\n", a, f));
+//		assert(ft_printf("%05f\n", f) == printf("%05f\n", f));
+//		assert(ft_printf("%0.5f\n", f) == printf("%0.5f\n", f));
+//		assert(ft_printf("%015.15f\n", f) == printf("%015.15f\n", f));
+//	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	//Successfully passed tests message:
 	printf("\n\n\t\t##########################################\n\t\t#  Congratulations!!! All Tests Passed!  #\n\t\t##########################################\n\n\n");

@@ -21,3 +21,6 @@ Errors to handle:
         -%ls or S is wchar_t converted to multibyte characters as if by wctomb() and printed up to '\0' or precision
 
 
+
+errors to fix:
+	-Need to use max unsigned to cast to from signed ints, keep track of if it's negative in the t_flags struct. Must handle variable overflow correctly for each datatype.
