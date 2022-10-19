@@ -2,6 +2,18 @@
 
 #include <assert.h>
 
+void	swap(int *a, int *b) 
+{
+	int temp;
+
+	temp = *a;
+	*a = *b;
+	*b = temp;
+}
+
+
+
+
 int	main()
 {
 	char *string = "this is a test run to make sure that it works ";
@@ -20,7 +32,10 @@ int	main()
 	float	zero = 0;
 
 	setbuf(stdout, NULL);
+
+	ft_printf("%015.15f\n", f);
 	
+	ft_printf("%0*f\n", 0, f);
 	ft_printf("%0*d\n", 0, 0);
 
 	ft_printf("%f\n", f);
@@ -297,14 +312,61 @@ for (int x = 32; x < 127; x++) {
 */
 
 
+
+	float	f2 = -f;
+
+int	a;
 // Tests of * and .* with 0 flags
-//	for (int a = 0; a < 100; a++) {
-//		assert(ft_printf("%0*f\n", a, f) == printf("%0*f\n", a, f));
-//		assert(ft_printf("%0.*f\n", a, f) == printf("%0.*f\n", a, f));
-//		assert(ft_printf("%05f\n", f) == printf("%05f\n", f));
-//		assert(ft_printf("%0.5f\n", f) == printf("%0.5f\n", f));
-//		assert(ft_printf("%015.15f\n", f) == printf("%015.15f\n", f));
-//	}
+	for (a = 0; a < 100; a++) {
+		assert(ft_printf("%*f\n", a, f2) == printf("%*f\n", a, f2));
+		assert(ft_printf("%.*f\n", a, f2) == printf("%.*f\n", a, f2));
+		assert(ft_printf("%0*f\n", a, f2) == printf("%0*f\n", a, f2));
+		assert(ft_printf("%0.*f\n", a, f2) == printf("%0.*f\n", a, f2));
+		assert(ft_printf("%-*f\n", a, f2) == printf("%-*f\n", a, f2));
+		assert(ft_printf("%-.*f\n", a, f2) == printf("%-.*f\n", a, f2));
+		assert(ft_printf("%+*f\n", a, f2) == printf("%+*f\n", a, f2));
+		assert(ft_printf("%+.*f\n", a, f2) == printf("%+.*f\n", a, f2));
+		assert(ft_printf("% *f\n", a, f2) == printf("% *f\n", a, f2));
+		assert(ft_printf("% .*f\n", a, f2) == printf("% .*f\n", a, f2));
+	
+		assert(ft_printf("%*.*f\n", a, a, f2) == printf("%*.*f\n", a, a, f2));
+		assert(ft_printf("%0*.*f\n", a, a, f2) == printf("%0*.*f\n", a, a, f2));
+		assert(ft_printf("%-*.*f\n", a, a, f2) == printf("%-*.*f\n", a, a, f2));
+		assert(ft_printf("%+*.*f\n", a, a, f2) == printf("%+*.*f\n", a, a, f2));
+
+
+		assert(ft_printf("%*f\n", a, f) == printf("%*f\n", a, f));
+		assert(ft_printf("%.*f\n", a, f) == printf("%.*f\n", a, f));
+		assert(ft_printf("%0*f\n", a, f) == printf("%0*f\n", a, f));
+		assert(ft_printf("%0.*f\n", a, f) == printf("%0.*f\n", a, f));
+		assert(ft_printf("%-*f\n", a, f) == printf("%-*f\n", a, f));
+		assert(ft_printf("%-.*f\n", a, f) == printf("%-.*f\n", a, f));
+		assert(ft_printf("%+*f\n", a, f) == printf("%+*f\n", a, f));
+		assert(ft_printf("%+.*f\n", a, f) == printf("%+.*f\n", a, f));
+		assert(ft_printf("% *f\n", a, f) == printf("% *f\n", a, f));
+		assert(ft_printf("% .*f\n", a, f) == printf("% .*f\n", a, f));
+	
+		assert(ft_printf("%*.*f\n", a, a, f) == printf("%*.*f\n", a, a, f));
+		assert(ft_printf("%0*.*f\n", a, a, f) == printf("%0*.*f\n", a, a, f));
+		assert(ft_printf("%-*.*f\n", a, a, f) == printf("%-*.*f\n", a, a, f));
+		assert(ft_printf("%+*.*f\n", a, a, f) == printf("%+*.*f\n", a, a, f));
+		assert(ft_printf("% *.*f\n", a, a, f) == printf("% *.*f\n", a, a, f));
+	}
+
+
+	int b = 0;
+	for (int z = 0; z < 2; z++, swap(&a, &b)) {
+		while (a != b) {
+			assert(ft_printf("%*.*f\n", a, b, f) == printf("%*.*f\n", a, b, f));	
+			assert(ft_printf("%0*.*f\n", a, b, f) == printf("%0*.*f\n", a, b, f));
+			assert(ft_printf("%-*.*f\n", a, b, f) == printf("%-*.*f\n", a, b, f));
+			assert(ft_printf("%+*.*f\n", a, b, f) == printf("%+*.*f\n", a, b, f));
+			assert(ft_printf("% *.*f\n", a, b, f) == printf("% *.*f\n", a, b, f));
+			a += (a < b) ? 1 : 0;
+			b += (a > b) ? 1 : 0;
+		}
+		a = 0;
+	}
 
 
 
