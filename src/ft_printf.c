@@ -97,9 +97,9 @@ int	print_start(t_flags *flags, int i, int x)
 	return (0);
 }
 
-void	reduce_field_width(t_flags *flags, int w)
+void	reduce_field_width(t_flags *flags, int w, char fmt_c)
 {
-	if(flags->flags ^ 4)
+	if(flags->flags ^ 4 || fmt_c == 'f' && flags->new == 1)
 		return ;
 	if (flags->field_width > w)
 		flags->field_width -= w;
@@ -160,9 +160,10 @@ char	*get_string(va_list ap, char **fmt_substr)
 
 int	print_string(va_list ap, char **fmt_substr, t_flags *flags)
 {
-	char	*s;
-	int	w_remain;
-	int	out_bytes;
+	char		*s;
+	int		w_remain;
+	int		out_bytes;
+	unsigned int	out_length;
 
 	s = get_string(ap, fmt_substr);
 	out_bytes = 0;
@@ -171,10 +172,10 @@ int	print_string(va_list ap, char **fmt_substr, t_flags *flags)
 	if (flags->precision[1] == 0)
 		flags->precision[0] = w_remain;
 	if (flags->precision[0] < w_remain)
-		flags->out_length = flags->precision[0];
+		out_length = flags->precision[0];
 	else
-		flags->out_length = w_remain;
-	w_remain = flags->field_width - flags->out_length;
+		out_length = w_remain;
+	w_remain = flags->field_width - out_length;
 	if (w_remain > 0 && flags->flags ^ 4)
 		out_bytes += process_field_width(w_remain, 0, 0, flags);
 	else if (w_remain > 0)
@@ -221,6 +222,10 @@ int	get_w(t_flags *flags, int int_length, char cs, int neg)
 {
 	int larger;
 
+	if (cs == 'f' && flags->new == 1)
+		return (0);
+	if (cs == 'f' && flags->new == 3)
+		return (flags->field_width);
 	if (!neg && test_flag(flags->flags))
 		neg = 1;
 	larger = (flags->precision[0] + neg > int_length) ? flags->precision[0] + neg : int_length;
@@ -244,7 +249,8 @@ int	padding(t_flags *flags, int i, int base, char cs)
 	int	x;
 
 	out_bytes = x = 0;
-	int_length = exclusion_test(flags, i) ? numlen_base(i, base) : 0;
+	int_length = exclusion_test(flags, i) ? 
+		numlen_base(i, base) + (cs == 'f') * (flags->precision[0] + 1) : 0;
 	int_length += print_start(flags, i, 0);
 	while ((w = get_w(flags, int_length, cs, i < 0)) && ++x)
 	{
@@ -254,11 +260,11 @@ int	padding(t_flags *flags, int i, int base, char cs)
 		if (flags->flags ^ 4)
 			flags->field_width = 0;
 		else
-			reduce_field_width(flags, abso(w) + int_length);
+			reduce_field_width(flags, abso(w) + int_length, cs);
 	}
 	if (!x && ((out_bytes += print_start(flags, i, 1)) || 1))
-		reduce_field_width(flags, int_length);
-	if (flags->flags & 4)
+		reduce_field_width(flags, int_length, cs);
+	if (flags->flags & 4 && (cs != 'f' || flags->new > 0))
 		flags->flags = 0;
 	return (out_bytes);
 }
@@ -278,20 +284,16 @@ void	write_zeros(int i, int seen)
 	start = ft_strnew2(seen, '0');
 	str = ft_strnew2(i, '0');
 	fused = ft_strjoin_free(start, str, '.');
-
 	write(1, fused, ++i + seen);
 	free(str);
 	free(fused);
 }
 
-long int	exponent(float n, long int x)
+long int	exponent(double n, long  x)
 {
-	double out;
-
-	out = (double)n;
 	for (int i = 0; i < x; i++)
-		out *= 10;
-	return (out);
+		n *= 10;
+	return (n);
 }
 
 long	proc_fi(double *f, int i, char fmt_c, t_flags *flags)
@@ -300,12 +302,15 @@ long	proc_fi(double *f, int i, char fmt_c, t_flags *flags)
 
 	if ((flags->new == 1 || flags->new == 2) && (flags->new = 2))
 		return (0);
-	if (fmt_c == 'f' && *f < 1)
+	if (fmt_c == 'f' && abso(*f) < 1)
 	{
 		if (flags->flags ^ 4)
+		{
+			flags->field_width = 0;
 			flags->flags = 0;
+		}
 		*f = exponent(*f, (long int)*flags->precision);
-		temp = *f;
+		temp = abso(*f);
 		if (*flags->precision == 0)
 			return (!(flags->new = 2));
 		(*f == 0) ? write_zeros(*flags->precision, !flags->new) : write(1, ".", 1);
@@ -358,7 +363,7 @@ int	standard_dispatch(va_list ap, char **fmt_substr, t_flags *flags)
 	}
 	if (**fmt_substr == 'f' && flags->precision[0] != 0)
 		++out_b;
-	if (flags->field_width)
+	if (flags->field_width && (flags->new = 3))
 		out_b += padding(flags, 1, 0, **fmt_substr);
 	(*fmt_substr)++;
 	free_t_flags(flags);

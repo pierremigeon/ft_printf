@@ -18,10 +18,11 @@ int	main()
 	b = c;
 	c = 1;
 	test->a = b;
-	printf("%i\n", test->++a);
+	//printf("%i\n", test->++a);
 
-	
-
+	printf("%-15.10iP\n", 5);	
+	printf("%15.0fP\n", 0.5);	
+	printf("%.0f\n", 0.0);	
 
 
 

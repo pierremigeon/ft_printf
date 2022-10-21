@@ -196,6 +196,7 @@ int	main()
 	//down-casting from long to int, does this cause overflow?
 	printf("%i\n", (int)(l + 1));
 
+	printf("%0.0iP\n", 3);
 
 	return (0);
 }

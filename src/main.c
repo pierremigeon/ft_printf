@@ -29,10 +29,15 @@ int	main()
 	int		bytes_printed;
 	char	*s2 = "YoLo";
 	float	f = 3.14;
+	float	f3 = -3.14;
 	float	zero = 0;
 
 	setbuf(stdout, NULL);
 
+	ft_printf("%-*f\n", 9, f);
+	ft_printf("%*f\n", 7, f);
+	ft_printf("%*f\n", 7, f3);
+	ft_printf("%*f\n", 0, -3.14);
 	ft_printf("%015.15f\n", f);
 	
 	ft_printf("%0*f\n", 0, f);
@@ -318,6 +323,7 @@ for (int x = 32; x < 127; x++) {
 int	a;
 // Tests of * and .* with 0 flags
 	for (a = 0; a < 100; a++) {
+	printf("a is %i\n", a);
 		assert(ft_printf("%*f\n", a, f2) == printf("%*f\n", a, f2));
 		assert(ft_printf("%.*f\n", a, f2) == printf("%.*f\n", a, f2));
 		assert(ft_printf("%0*f\n", a, f2) == printf("%0*f\n", a, f2));
