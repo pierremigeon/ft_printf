@@ -11,9 +11,6 @@ void	swap(int *a, int *b)
 	*b = temp;
 }
 
-
-
-
 int	main()
 {
 	char *string = "this is a test run to make sure that it works ";
@@ -28,25 +25,49 @@ int	main()
 	unsigned int	u = 42;
 	int		bytes_printed;
 	char	*s2 = "YoLo";
-	float	f = 3.14;
-	float	f3 = -3.14;
-	float	zero = 0;
+	double	f = 3.14;
+	double	f3 = -3.14;
+	double	zero = 0;
+	float	f2 = -f;
 
 	setbuf(stdout, NULL);
+	char *t_t;
+	t_t = ft_strnew2(5, 32);
 
+	ft_printf("%f\n", 0.0);
+	ft_printf("%-50.10i\n", 5);
+	ft_printf("%+*.*f\n", -100, 100, f);
+	ft_printf("%*.*f\n", 100, 0, f);
 	ft_printf("%-*f\n", 9, f);
-	ft_printf("%*f\n", 7, f);
-	ft_printf("%*f\n", 7, f3);
-	ft_printf("%*f\n", 0, -3.14);
-	ft_printf("%015.15f\n", f);
+	ft_printf("%0.*f\n", 21, f2);
+	ft_printf("%0.*f\n", 20, f2);
+	ft_printf("%-*f\n", 19, f2);
+	ft_printf("%0*f\n", 20, f2);
+	ft_printf("%0*f\n", 0, f2);
+	ft_printf("%.1s\n", t_t);
+	ft_printf("%0*d\n", -100, -100);
+	ft_printf("%0*.*d\n", 1, 1, -1);
+	ft_printf("%0*.*d\n", 100, 100, -100);
+	ft_printf("%0*.*d\n", -100, 100, -100);
+	ft_printf("%0*d\n", 100, -100);
+	//ft_printf("%0.*d\n", -100, -100);
+	//ft_printf("%0*.5d_X_%0*.5d_X_%0*.5d\n", -10, -100, -10, -100, -10, -100);
+	ft_printf("%-50.10i\n", i);
+//	ft_printf("%0*f\n", 20, f3);
+//	ft_printf("%.*f\n", 12, -3.14);
+//	ft_printf("%-*f\n", 9, f);
+//	ft_printf("%*f\n", 7, f);
+//	ft_printf("%*f\n", 7, f3);
+//	ft_printf("%*f\n", 0, -3.14);
+//	ft_printf("%015.15f\n", f);
 	
-	ft_printf("%0*f\n", 0, f);
-	ft_printf("%0*d\n", 0, 0);
+//	ft_printf("%0*f\n", 0, f);
+//	ft_printf("%0*d\n", 0, 0);
 
-	ft_printf("%f\n", f);
-	ft_printf("%f\n", zero);
-	ft_printf("%5.8f\n", zero);
-	ft_printf("%5.8f\n", f);
+//	ft_printf("%f\n", f);
+//	ft_printf("%f\n", zero);
+//	ft_printf("%5.8f\n", zero);
+//	ft_printf("%5.8f\n", f);
 
 	//ft_printf("% 50.10i\n", i);
 
@@ -91,12 +112,13 @@ int	main()
 	develop the %lc tests also, which is the same thing as %C
 */
 
+
 for (int x = 32; x < 127; x++) {
 	char *test;
 
 	assert(ft_printf("%c\n", x) == printf("%c\n", x));
 	for (int y = 5; y < 31; y *= 6) {
-	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~x is %i and y is %i\n", x, y);
+	//printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~x is %i and y is %i\n", x, y);
 		test = ft_strnew2(y, x);
 		assert(ft_printf("%s\n", test) == printf("%s\n", test));
 		assert(ft_printf("%.0s\n", test) == printf("%.0s\n", test));
@@ -115,6 +137,7 @@ for (int x = 32; x < 127; x++) {
 		free(test);
 	}
 }
+
 
 	// Some more precision and field width tests with (-) flag
 	assert(ft_printf("%5.2sP\n", string) == printf("%5.2sP\n", string));
@@ -146,6 +169,7 @@ for (int x = 32; x < 127; x++) {
 	assert(ft_printf("% 50.10i\n", i) == printf("% 50.10i\n", i));
 	assert(ft_printf("%+50.10i\n", i) == printf("%+50.10i\n", i));
 	assert(ft_printf("%-50.10i\n", i) == printf("%-50.10i\n", i));
+
 
 	// Plus (+), Minus(-) and Space( ) tests with pos/neg ints of varying sizes
 	assert(ft_printf("%+i\n", i) == printf("%+i\n", i));
@@ -197,6 +221,7 @@ for (int x = 32; x < 127; x++) {
 	assert(ft_printf("% .*i\n", i, i) == printf("% .*i\n", i, i));
 	assert(ft_printf("%.*i\n", i, i) == printf("%.*i\n", i, i));
 
+
 //// * and .* with +/-/ / flags using a long
 	//assert(ft_printf("%*li\n", i, l) == printf("%*li\n", i, l));
 	//assert(ft_printf("%+*i\n", i, l) == printf("%+*i\n", i, l));
@@ -211,7 +236,7 @@ for (int x = 32; x < 127; x++) {
 
 
 // Tests of * and .* with 0 flags
-	assert(ft_printf("%0*i\n", i, i) == printf("%0*i\n", i, i));
+//	assert(ft_printf("%0*i\n", i, i) == printf("%0*i\n", i, i));
 
 
 /* All the %i tests with %d */
@@ -266,6 +291,7 @@ for (int x = 32; x < 127; x++) {
 
 // Time to test * and .* flags!!!
 // * and .* with +/-/ / flags
+
 	assert(ft_printf("%*d\n", i, i) == printf("%*d\n", i, i));
 	assert(ft_printf("%+*d\n", i, i) == printf("%+*d\n", i, i));
 	assert(ft_printf("% *d\n", i, i) == printf("% *d\n", i, i));
@@ -275,6 +301,8 @@ for (int x = 32; x < 127; x++) {
 	assert(ft_printf("%-.*d\n", i, i) == printf("%-.*d\n", i, i));
 	assert(ft_printf("% .*d\n", i, i) == printf("% .*d\n", i, i));
 	assert(ft_printf("%.*d\n", i, i) == printf("%.*d\n", i, i));
+
+
 
 //// * and .* with +/-/ / flags using a long
 	//assert(ft_printf("%*li\n", i, l) == printf("%*li\n", i, l));
@@ -290,13 +318,26 @@ for (int x = 32; x < 127; x++) {
 
 
 // Tests of * and .* with 0 flags
-	for (int a = 0; a < 100; a++) {
-		assert(ft_printf("%0*d\n", a, a) == printf("%0*d\n", a, a));
-		assert(ft_printf("%0.*d\n", a, a) == printf("%0.*d\n", a, a));
-		assert(ft_printf("%05d\n", a) == printf("%05d\n", a));
-		assert(ft_printf("%0.5d\n", a) == printf("%0.5d\n", a));
-		assert(ft_printf("%015.15d\n", a) == printf("%015.15d\n", a));
+
+	for(int z = 0, a = -100; z < 2; z++, a = -100) {
+		for (int b = (z) ? -1 * a : a; a <= 100; a++, b += (z) ? -1 : 1) {
+		//printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~a is %i and b is %i\n", a, b);
+			assert(ft_printf("%0*d\n", a, a) == printf("%0*d\n", a, a));
+			assert(ft_printf("%0.*d\n", a, a) == printf("%0.*d\n", a, a));
+			assert(ft_printf("%0*.*d\n", a, a, a) == printf("%0*.*d\n", a, a, a));
+		
+			assert(ft_printf("%0*d\n", a, b) == printf("%0*d\n", a, b));
+			assert(ft_printf("%0.*d\n", a, b) == printf("%0.*d\n", a, b));
+			assert(ft_printf("%0*.*d\n", a, b, b) == printf("%0*.*d\n", a, b, b));
+			assert(ft_printf("%0*.*d\n", a, b, a) == printf("%0*.*d\n", a, b, a));
+				
+			assert(ft_printf("%0*d\n", b, a) == printf("%0*d\n", b, a));
+			assert(ft_printf("%0.*d\n", b, a) == printf("%0.*d\n", b, a));
+			assert(ft_printf("%0*.*d\n", b, b, a) == printf("%0*.*d\n", b, b, a));
+			assert(ft_printf("%0*.*d\n", b, b, b) == printf("%0*.*d\n", b, b, b));
+		}
 	}
+
 
 
 
@@ -317,13 +358,11 @@ for (int x = 32; x < 127; x++) {
 */
 
 
-
-	float	f2 = -f;
-
 int	a;
 // Tests of * and .* with 0 flags
-	for (a = 0; a < 100; a++) {
-	printf("a is %i\n", a);
+	for (a = 0; a <= 100; a++) {
+//	printf("a is %i\n", a);
+	
 		assert(ft_printf("%*f\n", a, f2) == printf("%*f\n", a, f2));
 		assert(ft_printf("%.*f\n", a, f2) == printf("%.*f\n", a, f2));
 		assert(ft_printf("%0*f\n", a, f2) == printf("%0*f\n", a, f2));
@@ -339,7 +378,7 @@ int	a;
 		assert(ft_printf("%0*.*f\n", a, a, f2) == printf("%0*.*f\n", a, a, f2));
 		assert(ft_printf("%-*.*f\n", a, a, f2) == printf("%-*.*f\n", a, a, f2));
 		assert(ft_printf("%+*.*f\n", a, a, f2) == printf("%+*.*f\n", a, a, f2));
-
+		assert(ft_printf("% *.*f\n", a, a, f2) == printf("% *.*f\n", a, a, f2));
 
 		assert(ft_printf("%*f\n", a, f) == printf("%*f\n", a, f));
 		assert(ft_printf("%.*f\n", a, f) == printf("%.*f\n", a, f));
@@ -359,10 +398,11 @@ int	a;
 		assert(ft_printf("% *.*f\n", a, a, f) == printf("% *.*f\n", a, a, f));
 	}
 
-
-	int b = 0;
+	a--;
+	int b = -100;
 	for (int z = 0; z < 2; z++, swap(&a, &b)) {
 		while (a != b) {
+			//printf("a is %i b is %i\n", a, b);
 			assert(ft_printf("%*.*f\n", a, b, f) == printf("%*.*f\n", a, b, f));	
 			assert(ft_printf("%0*.*f\n", a, b, f) == printf("%0*.*f\n", a, b, f));
 			assert(ft_printf("%-*.*f\n", a, b, f) == printf("%-*.*f\n", a, b, f));
@@ -371,17 +411,33 @@ int	a;
 			a += (a < b) ? 1 : 0;
 			b += (a > b) ? 1 : 0;
 		}
-		a = 0;
+		b = -100;
+	}
+	b = -100;
+	for (int z = 0; z < 2; z++, a = -100) {
+		while(a <= 100) {
+			//printf("a is %i b is %i\n", a, b);
+			assert(ft_printf("%*.*f\n", a, b, f) == printf("%*.*f\n", a, b, f));	
+			assert(ft_printf("%0*.*f\n", a, b, f) == printf("%0*.*f\n", a, b, f));
+			assert(ft_printf("%-*.*f\n", a, b, f) == printf("%-*.*f\n", a, b, f));
+			assert(ft_printf("%+*.*f\n", a, b, f) == printf("%+*.*f\n", a, b, f));
+			assert(ft_printf("% *.*f\n", a, b, f) == printf("% *.*f\n", a, b, f));	
+			b += (a == b) ? 1 : -1;
+			a++;
+		}
+		b--;
 	}
 
+	double f4 = 0.0;
+	double f5 = 0.05;
+	double f6 = -0.0;
+	double f7 = -0.05;
 
-
-
-
-
-
-
-
+	assert(ft_printf("%f\n", f4) == printf("%f\n", f4));
+	assert(ft_printf("%f\n", f5) == printf("%f\n", f5));
+	assert(ft_printf("%f\n", f6) == printf("%f\n", f6));
+	assert(ft_printf("%f\n", f7) == printf("%f\n", f7));
+	
 
 
 
