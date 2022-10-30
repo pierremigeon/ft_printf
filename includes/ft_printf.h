@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include "../libft/libft.h"
 #include <stdio.h>
+#include <math.h>
 
 typedef struct 	s_flags
 {

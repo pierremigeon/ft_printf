@@ -64,8 +64,6 @@ int	main()
 	}
 	if (wrong == 0)
 			printf("\n\n\t\t##########################################\n\t\t#  Congratulations!!! All Tests Passed!  #\n\t\t##########################################\n\n\n");
-	wrong /= 2;
-	correct /= 2;
 	//print summary statistics
 	printf("Correct is %i and incorrect is %i\n", correct, wrong);
 	close(fd);

@@ -14,7 +14,7 @@ runtest:
 assert_test:
 	@if [ ! -e ./$(OUT) ]; then make -C .; fi
 	@./$(OUT) > ./test_suite/assert_test_output_raw.txt
-	@make run_compare -C testing
+	@make run_compare -C test_suite
 
 refresh:
 	@./$(OUT) > ./test_suite/assert_test_output_raw.txt

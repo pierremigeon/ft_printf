@@ -34,25 +34,35 @@ int	main()
 	char *t_t;
 	t_t = ft_strnew2(5, 32);
 
-	ft_printf("%f\n", 0.0);
-	ft_printf("%-50.10i\n", 5);
-	ft_printf("%+*.*f\n", -100, 100, f);
-	ft_printf("%*.*f\n", 100, 0, f);
-	ft_printf("%-*f\n", 9, f);
-	ft_printf("%0.*f\n", 21, f2);
-	ft_printf("%0.*f\n", 20, f2);
-	ft_printf("%-*f\n", 19, f2);
-	ft_printf("%0*f\n", 20, f2);
-	ft_printf("%0*f\n", 0, f2);
-	ft_printf("%.1s\n", t_t);
-	ft_printf("%0*d\n", -100, -100);
-	ft_printf("%0*.*d\n", 1, 1, -1);
-	ft_printf("%0*.*d\n", 100, 100, -100);
-	ft_printf("%0*.*d\n", -100, 100, -100);
-	ft_printf("%0*d\n", 100, -100);
+	//ft_printf("%f\n", 0.05);
+	//ft_printf("%*f\n", 0, f);
+	//ft_printf("%*f\n", 0, f2);
+	//ft_printf("%015f\n", -0.0);
+	//ft_printf("%0*.*d\n", 1, 1, 1);
+	//ft_printf("%-50.10i\n", i);
+	//ft_printf("%-15f\n", -0.0);
+	//ft_printf("%015f\n", -0.0);
+	//ft_printf("%f\n", -0.05);
+	//ft_printf("%f\n", 0.05);
+	//ft_printf("%f\n", 0.0);
+	//ft_printf("%-50.10i\n", 5);
+	//ft_printf("%+*.*f\n", -100, 100, f);
+	//ft_printf("%*.*f\n", 100, 0, f);
+	//ft_printf("%-*f\n", 9, f);
+	//ft_printf("%0.*f\n", 21, f2);
+	//ft_printf("%0.*f\n", 20, f2);
+	//ft_printf("%-*f\n", 19, f2);
+	//ft_printf("%0*f\n", 20, f2);
+	//ft_printf("%0*f\n", 0, f2);
+	//ft_printf("%.1s\n", t_t);
+	//ft_printf("%0*d\n", -100, -100);
+	//ft_printf("%0*.*d\n", 1, 1, -1);
+	//ft_printf("%0*.*d\n", 100, 100, -100);
+	//ft_printf("%0*.*d\n", -100, 100, -100);
+	//ft_printf("%0*d\n", 100, -100);
 	//ft_printf("%0.*d\n", -100, -100);
 	//ft_printf("%0*.5d_X_%0*.5d_X_%0*.5d\n", -10, -100, -10, -100, -10, -100);
-	ft_printf("%-50.10i\n", i);
+	//ft_printf("%-50.10i\n", i);
 //	ft_printf("%0*f\n", 20, f3);
 //	ft_printf("%.*f\n", 12, -3.14);
 //	ft_printf("%-*f\n", 9, f);
@@ -118,7 +128,7 @@ for (int x = 32; x < 127; x++) {
 
 	assert(ft_printf("%c\n", x) == printf("%c\n", x));
 	for (int y = 5; y < 31; y *= 6) {
-	//printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~x is %i and y is %i\n", x, y);
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~x is %i and y is %i\n", x, y);
 		test = ft_strnew2(y, x);
 		assert(ft_printf("%s\n", test) == printf("%s\n", test));
 		assert(ft_printf("%.0s\n", test) == printf("%.0s\n", test));
@@ -321,7 +331,7 @@ for (int x = 32; x < 127; x++) {
 
 	for(int z = 0, a = -100; z < 2; z++, a = -100) {
 		for (int b = (z) ? -1 * a : a; a <= 100; a++, b += (z) ? -1 : 1) {
-		//printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~a is %i and b is %i\n", a, b);
+		printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~a is %i and b is %i\n", a, b);
 			assert(ft_printf("%0*d\n", a, a) == printf("%0*d\n", a, a));
 			assert(ft_printf("%0.*d\n", a, a) == printf("%0.*d\n", a, a));
 			assert(ft_printf("%0*.*d\n", a, a, a) == printf("%0*.*d\n", a, a, a));
@@ -361,7 +371,7 @@ for (int x = 32; x < 127; x++) {
 int	a;
 // Tests of * and .* with 0 flags
 	for (a = 0; a <= 100; a++) {
-//	printf("a is %i\n", a);
+	printf("~~~~~~~~~~a is %i\n", a);
 	
 		assert(ft_printf("%*f\n", a, f2) == printf("%*f\n", a, f2));
 		assert(ft_printf("%.*f\n", a, f2) == printf("%.*f\n", a, f2));
@@ -402,7 +412,7 @@ int	a;
 	int b = -100;
 	for (int z = 0; z < 2; z++, swap(&a, &b)) {
 		while (a != b) {
-			//printf("a is %i b is %i\n", a, b);
+			printf("~~~~~~~~~~~~~~~~~a is %i b is %i\n", a, b);
 			assert(ft_printf("%*.*f\n", a, b, f) == printf("%*.*f\n", a, b, f));	
 			assert(ft_printf("%0*.*f\n", a, b, f) == printf("%0*.*f\n", a, b, f));
 			assert(ft_printf("%-*.*f\n", a, b, f) == printf("%-*.*f\n", a, b, f));
@@ -416,7 +426,7 @@ int	a;
 	b = -100;
 	for (int z = 0; z < 2; z++, a = -100) {
 		while(a <= 100) {
-			//printf("a is %i b is %i\n", a, b);
+			printf("~~~~~~~~~~~~~~~a is %i b is %i\n", a, b);
 			assert(ft_printf("%*.*f\n", a, b, f) == printf("%*.*f\n", a, b, f));	
 			assert(ft_printf("%0*.*f\n", a, b, f) == printf("%0*.*f\n", a, b, f));
 			assert(ft_printf("%-*.*f\n", a, b, f) == printf("%-*.*f\n", a, b, f));
@@ -435,7 +445,8 @@ int	a;
 
 	assert(ft_printf("%f\n", f4) == printf("%f\n", f4));
 	assert(ft_printf("%f\n", f5) == printf("%f\n", f5));
-	assert(ft_printf("%f\n", f6) == printf("%f\n", f6));
+	//assert(ft_printf("%f\n", f6) == printf("%f\n", f6));
+	assert(ft_printf("%015f\n", f6) == printf("%015f\n", f6));
 	assert(ft_printf("%f\n", f7) == printf("%f\n", f7));
 	
 
