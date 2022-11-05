@@ -5,7 +5,7 @@
 
 void	free_strings(char **s)
 {
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 3; i++) {
 		free(s[i]);
 		s[i] = NULL;
 	}
@@ -15,7 +15,7 @@ int	check_equal(char **strings)
 {
 	int	check;
 
-	check = ft_strcmp(strings[0], strings[1]);
+	check = ft_strcmp(strings[1], strings[2]);
 	//free_strings(strings);
 	return (!(check));
 }
@@ -42,25 +42,25 @@ int	main()
 	int	wrong;
 
 	correct = wrong = i = 0;
-	compare = init_compare(2);
+	compare = init_compare(3);
 	fd = open("assert_test_output_filtered.txt", O_RDONLY);	
 	if (fd == -1)
 		if (printf("ERROR: NO INPUT FILE FOUND!\n"))
 			exit(1);
 	while ((r = get_next_line(fd, &compare[i]) > 0))
 	{
-		if (compare[0] && compare[1])
+		if (compare[1] && compare[2])
 		{
 			if(check_equal(compare))
 				correct++;
 			else
 			{
-				printf("%s\n%s\n", compare[0], compare[1] );
+				printf("%s\n%s\n%s\n", compare[0], compare[1], compare[2]);
 				wrong++;
 			}
 			free_strings(compare);
 		}
-		i = (i == 1) ? 0 : 1;
+		i = (i < 2) ? i + 1 : 0;
 	}
 	if (wrong == 0)
 			printf("\n\n\t\t##########################################\n\t\t#  Congratulations!!! All Tests Passed!  #\n\t\t##########################################\n\n\n");

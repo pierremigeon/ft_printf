@@ -1,0 +1,1 @@
+: %s/\v(^.*(assert\()(ft_printf.*)(\")(,.* f[0-9]*\))( \=\=.*))/\t\tft_putstr(str_update(\"\2\3\4\5\6\"\5);\r\1/gc

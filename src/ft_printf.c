@@ -240,9 +240,9 @@ int	get_w(t_flags *flags, int int_length, char cs, int neg)
 
 	if (cs == 'f' && flags->new == 1)
 		return (0);
-	if (((flags->new == 3) || (flags->new == 4)) && flags->field_width)
+	if ((flags->new == 3) || (flags->new == 4)) // && flags->field_width)
 		if (flags->flags == 17 || flags->flags == 4 )
-			return (flags->field_width - *flags->precision - (flags->new % 3) - (cs == 'f' && *flags->precision != 0));
+			return (flags->field_width);
 	if (!neg && test_flag(flags->flags))
 		neg = 1;
 	larger = (flags->precision[0] + neg > int_length) ? flags->precision[0] + neg : int_length;
@@ -419,6 +419,8 @@ int	clean_slate(t_flags *flags, double f)
 		out = flags->precision[0] + 1;
 	if (flags->flags ^ 4)
 		flags->field_width = flags->flags = 0;
+	else if (flags->precision[1] > 1)
+		flags->field_width -= out;
 	return (out);
 }
 
