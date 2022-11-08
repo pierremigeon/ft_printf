@@ -11,12 +11,11 @@ runtest:
 	gcc -g $(MAIN) $(SRC) $(LIB) -o $(OUT)
 	lldb ft_printf
 
-assert_test:
-	@if [ ! -e ./$(OUT) ]; then make -C .; fi
-	@./$(OUT) > ./test_suite/assert_test_output_raw.txt
+assert_test: refresh
 	@make run_compare -C test_suite
 
 refresh:
+	@if [ ! -e ./$(OUT) ]; then make -C .; fi
 	@./$(OUT) > ./test_suite/assert_test_output_raw.txt
 	
 clean:

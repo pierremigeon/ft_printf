@@ -7,7 +7,6 @@ def valid (line):
 			return (0)
 	return (1)
 
-print("Filtering the test output...");
 
 r = open("assert_test_output_raw.txt", "r")
 w = open("assert_test_output_filtered.txt", "w")

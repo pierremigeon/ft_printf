@@ -3,6 +3,7 @@
 Any flags past the type converion are just treated as characters to print:
         printf ("%is", 5); prints "5s"
         printf ("%ih", 5); prints "5h"
+	->no errors detected for these yet. Still writing tests.
 
 Errors to handle:
         -input isn't type specified
