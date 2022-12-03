@@ -169,30 +169,31 @@ char	*get_string(va_list ap, char **fmt_substr)
 int	print_string(va_list ap, char **fmt_substr, t_flags *flags)
 {
 	char		*s;
-	int		w_remain;
+	int		w_remain[2] = { 0, 0 };
 	int		out_bytes;
 	unsigned int	out_length;
 
 	s = get_string(ap, fmt_substr);
-	out_bytes = 0;
+	w_remain[1] = (**fmt_substr == 'c') ? 1 : 0; 
+	out_bytes = (s[0] == '\0' && w_remain[1]) ? 1 : 0;
 	(*fmt_substr)++;
-	w_remain =  ft_strlen(s);
+	w_remain[0] = ft_strlen(s);
 	if (flags->precision[1] == 0)
-		flags->precision[0] = w_remain;
-	if (flags->precision[0] < w_remain)
+		flags->precision[0] = w_remain[0];
+	if (flags->precision[0] < w_remain[0])
 		out_length = flags->precision[0];
 	else
-		out_length = w_remain;
-	w_remain = flags->field_width - out_length;
-	if (w_remain > 0 && flags->flags ^ 4)
-		out_bytes += process_field_width(w_remain, 0, 0, flags);
-	else if (w_remain > 0 && (flags->flags = 17))
+		out_length = w_remain[0];
+	w_remain[0] = flags->field_width - out_length;
+	if (w_remain[0] > 0 && flags->flags ^ 4)
+		out_bytes += process_field_width(w_remain[0], 0, 0, flags);
+	else if (w_remain[0] > 0 && (flags->flags = 17))
 	{
-		out_bytes += ft_putstrnl(s, flags->precision[0]);
-		out_bytes += process_field_width(w_remain, 0, 0, flags);
+		out_bytes += ft_putstrnl(s, flags->precision[0], w_remain[1]);
+		out_bytes += process_field_width(w_remain[0], 0, 0, flags);
 		return (out_bytes);
 	}
-	return (out_bytes + ft_putstrnl(s, flags->precision[0]));
+	return (out_bytes + ft_putstrnl(s, flags->precision[0], w_remain[1]));
 }
 
 int	numlen_base(long i, int base)

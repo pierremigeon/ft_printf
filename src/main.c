@@ -32,6 +32,7 @@ int	main()
 
 	setbuf(stdout, NULL);
 
+
 /*
 	ft_printf must handle the cspdioOuUxX% flags.
 	Basic cspdioOuxX% tests here.
@@ -67,6 +68,121 @@ int	main()
 	assert(ft_printf("%c\n", c) == printf("%c\n", c));
 	printf("assert(ft_printf(\"%%%%\\n\") == printf(\"%%%%\\n\"));\n");
 	assert(ft_printf("%%\n") == printf("%%\n"));
+
+
+
+/*
+	escape character tests here
+*/
+	char z = '\0';
+
+	assert(ft_printf("\\ \n") == printf("\\ \n"));
+	assert(ft_printf("\\\\ \n") == printf("\\\\ \n"));
+	assert(ft_printf("\\\\\\ \n") == printf("\\\\\\ \n"));
+	assert(ft_printf("\\\\\\\\ \n") == printf("\\\\\\\\ \n"));
+
+	assert(ft_printf("\n") == printf("\n"));
+	assert(ft_printf("\n\n") == printf("\n\n"));
+	assert(ft_printf("\n\n\n") == printf("\n\n\n"));
+	assert(ft_printf("\n \n") == printf("\n \n"));
+
+	assert(ft_printf("\t\n") == printf("\t\n"));
+	assert(ft_printf("\t\t\n") == printf("\t\t\n"));
+	assert(ft_printf("\t\t\t\n") == printf("\t\t\t\n"));
+	assert(ft_printf("\t\t\t\t\n") == printf("\t\t\t\t\n"));
+	assert(ft_printf("\t \t\n") == printf("\t \t\n"));
+	assert(ft_printf("\t \t \n") == printf("\t \t \n"));
+
+	assert(ft_printf("\\p\n") == printf("\\p\n"));
+
+	assert(ft_printf("\a") == printf("\a"));
+	assert(ft_printf("\a\a") == printf("\a\a"));
+	assert(ft_printf("\a\a\a") == printf("\a\a\a"));
+	assert(ft_printf("\a \a") == printf("\a \a"));
+
+	assert(ft_printf("\b") == printf("\b"));
+	assert(ft_printf("\b\b") == printf("\b\b"));
+	assert(ft_printf("\b\b\b") == printf("\b\b\b"));
+	assert(ft_printf("\b \b") == printf("\b \b"));
+
+	assert(ft_printf("\f") == printf("\f"));
+	assert(ft_printf("\f\f") == printf("\f\f"));
+	assert(ft_printf("\f\f\f") == printf("\f\f\f"));
+	assert(ft_printf("\f \f") == printf("\f \f"));
+
+	assert(ft_printf("\r") == printf("\r"));
+	assert(ft_printf("\r\r") == printf("\r\r"));
+	assert(ft_printf("\r\r\r") == printf("\r\r\r"));
+	assert(ft_printf("\r \r") == printf("\r \r"));
+
+	assert(ft_printf("\v") == printf("\v"));
+	assert(ft_printf("\v\v") == printf("\v\v"));
+	assert(ft_printf("\v\v\v") == printf("\v\v\v"));
+	assert(ft_printf("\v \v") == printf("\v \v"));
+
+	assert(ft_printf("\'") == printf("\'"));
+	assert(ft_printf("\'\'") == printf("\'\'"));
+	assert(ft_printf("\'\'\'") == printf("\'\'\'"));
+	assert(ft_printf("\' \'") == printf("\' \'"));
+
+	assert(ft_printf("\"") == printf("\""));
+	assert(ft_printf("\"\"") == printf("\"\""));
+	assert(ft_printf("\"\"\"") == printf("\"\"\""));
+	assert(ft_printf("\" \"") == printf("\" \""));
+
+	assert(ft_printf("\?") == printf("\?"));
+	assert(ft_printf("\?\?") == printf("\?\?"));
+	assert(ft_printf("\?\?\?") == printf("\?\?\?"));
+	assert(ft_printf("\? \?") == printf("\? \?"));
+
+	assert(ft_printf("\?") == printf("\?"));
+	assert(ft_printf("\?\?") == printf("\?\?"));
+	assert(ft_printf("\?\?\?") == printf("\?\?\?"));
+	assert(ft_printf("\? \?") == printf("\? \?"));
+
+
+
+/*
+	%% non-existing and %% existing flags
+	null strings and null characters
+*/
+
+	//char z = '\0';
+	char *zero_s;
+	if(!(zero_s = (char *)malloc(sizeof(char) * 1)))
+		exit(1);
+	zero_s[0] = '\0';
+	
+	assert(ft_printf("%%a\n") == printf("%%a\n"));
+	assert(ft_printf("%%s\n") == printf("%%s\n"));
+	assert(ft_printf("%%c\n") == printf("%%c\n"));
+	assert(ft_printf("%%i\n") == printf("%%i\n"));
+	assert(ft_printf("%%d\n") == printf("%%d\n"));
+	assert(ft_printf("%%o\n") == printf("%%o\n"));
+	assert(ft_printf("%%u\n") == printf("%%u\n"));
+	assert(ft_printf("%%x\n") == printf("%%x\n"));
+
+	assert(ft_printf("%s\n", &z) == printf("%s\n", &z));
+	assert(ft_printf("%s%s\n", &z, &z) == printf("%s%s\n", &z, &z));
+	assert(ft_printf("%s %s\n", &z, &z) == printf("%s %s\n", &z, &z));
+	assert(ft_printf("%s\n", "") == printf("%s\n", ""));
+	assert(ft_printf("%s%s\n", "", "") == printf("%s%s\n", "", ""));
+	assert(ft_printf("%s %s\n", "", "") == printf("%s %s\n", "", ""));
+	assert(ft_printf("%s\n", zero_s) == printf("%s\n", zero_s));
+	assert(ft_printf("%s%s\n", zero_s, zero_s) == printf("%s%s\n", zero_s, zero_s));
+	assert(ft_printf("%s %s\n", zero_s, zero_s) == printf("%s %s\n", zero_s, zero_s));
+	
+	assert(ft_printf("%c\n", z) == printf("%c\n", z));
+	assert(ft_printf("%c%c\n", z, z) == printf("%c%c\n", z, z));
+	assert(ft_printf("%c %c\n", z, z) == printf("%c %c\n", z, z));
+	assert(ft_printf("%c\n", '\0') == printf("%c\n", '\0'));
+	assert(ft_printf("%c%c\n", '\0', '\0') == printf("%c%c\n", '\0', '\0'));
+	assert(ft_printf("%c %c\n", '\0', '\0') == printf("%c %c\n", '\0', '\0'));
+	assert(ft_printf("%c\n", *zero_s) == printf("%c\n", *zero_s));
+	assert(ft_printf("%c%c\n", *zero_s, *zero_s) == printf("%c%c\n", *zero_s, *zero_s));
+	assert(ft_printf("%c %c\n", *zero_s, *zero_s) == printf("%c %c\n", *zero_s, *zero_s));
+
+	free(zero_s);
 
 /*
 	Tests for char %c and string %s here
@@ -543,22 +659,21 @@ int	a;
 	assert(ft_printf("%f\n", f7) == printf("%f\n", f7));
 
 
-//assert(ft_printf("%is", 5) == printf("%is", 5));
-assert(ft_printf("%is\n", 5) == printf("%is\n", 5));
-assert(ft_printf("%isabcd\n", 5) == printf("%isabcd\n", 5));
-assert(ft_printf("%id\n", 5) == printf("%id\n", 5));
-assert(ft_printf("%ix\n", 5) == printf("%ix\n", 5));
-assert(ft_printf("%ii\n", 5) == printf("%ii\n", 5));
-assert(ft_printf("%ip\n", 5) == printf("%ip\n", 5));
-assert(ft_printf("%ic\n", 5) == printf("%ic\n", 5));
-assert(ft_printf("%io\n", 5) == printf("%io\n", 5));
+	assert(ft_printf("%is\n", 5) == printf("%is\n", 5));
+	assert(ft_printf("%isabcd\n", 5) == printf("%isabcd\n", 5));
+	assert(ft_printf("%id\n", 5) == printf("%id\n", 5));
+	assert(ft_printf("%ix\n", 5) == printf("%ix\n", 5));
+	assert(ft_printf("%ii\n", 5) == printf("%ii\n", 5));
+	assert(ft_printf("%ip\n", 5) == printf("%ip\n", 5));
+	assert(ft_printf("%ic\n", 5) == printf("%ic\n", 5));
+	assert(ft_printf("%io\n", 5) == printf("%io\n", 5));
 
-assert(ft_printf("%id%id\n", 5, 5) == printf("%id%id\n", 5, 5));
-assert(ft_printf("%ix%ix\n", 5, 5) == printf("%ix%ix\n", 5, 5));
-assert(ft_printf("%ii%ii\n", 5, 5) == printf("%ii%ii\n", 5, 5));
-assert(ft_printf("%ip%ip\n", 5, 5) == printf("%ip%ip\n", 5, 5));
-assert(ft_printf("%ic%ic\n", 5, 5) == printf("%ic%ic\n", 5, 5));
-assert(ft_printf("%io%io\n", 5, 5) == printf("%io%io\n", 5, 5));
+	assert(ft_printf("%id%id\n", 5, 5) == printf("%id%id\n", 5, 5));
+	assert(ft_printf("%ix%ix\n", 5, 5) == printf("%ix%ix\n", 5, 5));
+	assert(ft_printf("%ii%ii\n", 5, 5) == printf("%ii%ii\n", 5, 5));
+	assert(ft_printf("%ip%ip\n", 5, 5) == printf("%ip%ip\n", 5, 5));
+	assert(ft_printf("%ic%ic\n", 5, 5) == printf("%ic%ic\n", 5, 5));
+	assert(ft_printf("%io%io\n", 5, 5) == printf("%io%io\n", 5, 5));
 
 
 

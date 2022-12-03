@@ -5,6 +5,7 @@ LIB = ./libft/libft.a
 OUT = ft_printf
 
 make:
+	@if [ ! -e $(LIB) ]; then make -C ./libft; fi
 	gcc $(MAIN) $(SRC) $(LIB) -o $(OUT)
 
 runtest:
