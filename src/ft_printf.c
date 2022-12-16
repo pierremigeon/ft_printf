@@ -8,7 +8,7 @@ int	isConversion(char c)
 		c == 'p' || c == 'd' || \
 		c == 'i' || c == 'u' || \
 		c == 'x' || c == 'X' || \
-		c == 'f' );
+		c == 'f' || c == 'o');
 }
 
 int	ishash(t_flags *flags)
@@ -474,8 +474,6 @@ void	finalize_flags(char c, t_flags *out)
 {
 	if (c == 'p' && (out->flags ^ 1))
 		out->flags |= 1;
-	//if (out->precision[1] && (out->flags & 2))
-	//	out->flags ^= 2;
 	if (out->field_width && (out->flags & 2) && (out->flags ^ 6) && !out->precision[1])
 	{
 		out->precision[1] = 2;
@@ -606,59 +604,66 @@ t_flags	*get_flags(va_list ap, char **fmt_substr)
 	return (out);
 }
 
-int	get_function(char **fmt_substr)
-{
-	int	i;
-
-	if ((i = test_ls(**fmt_substr)))
-	{
-		if (*(*fmt_substr + 1) == 'l' && i == 2)
-			 return (1);
-		else
-			return (0);
-	}
-	if (**fmt_substr == 'h')
-	{
-		if (*(*fmt_substr + 1) == 'h')
-			return (3);
-		else
-			return (2);
-	}
-	if (**fmt_substr == 'j')
-		return (4);
-	if (**fmt_substr == 'z')
-		return (5);
-	else
-		return (0);
-}
-
 int	dispatcher(va_list ap, char **fmt_substr)
 {
 	t_flags		*flags;
 
-	t_dispatcher 	functs[1] = {
-		//&dispatch_l,
-		//&dispatch_ll,
-		//&dispatch_h,
-		//&dispatch_hh,
-		//&dispatch_j,
-		//&dispatch_z,
-		&standard_dispatch
-	};
 	flags = get_flags(ap, fmt_substr);
 	return (functs[get_function(fmt_substr)](ap, fmt_substr, flags));
 }
 
-int	write_length(char *fmt_str)
+int	write_length(char *fmt_str, int x)
 {
 	int out_len;
 
 	out_len = 0;
 	if (*(fmt_str + out_len) == '%')
-		out_len++;
-	while (*(fmt_str + out_len) && *(fmt_str + out_len) != '%')
-		out_len++;
+		++out_len;
+	while (x && *(fmt_str + out_len) && *(fmt_str + out_len) != '%')
+		++out_len;
+	while (!x && *(fmt_str + out_len) && (*(fmt_str + out_len) != ' ' && 
+		!isConversion(*(fmt_str + out_len))))
+			++out_len;
+	if (isConversion(*(fmt_str + out_len)))
+		++out_len;
 	return (out_len);
+}
+
+void	check_format_correct(char **fmt_substr)
+{
+	int h;
+	int l;
+	char *start;
+
+	h = l = 0;
+	start = *fmt_substr;
+	++*fmt_substr;
+	while (is_flag(*fmt_substr))
+		++*fmt_substr;
+	while (ft_isdigit(**fmt_substr) || is_wp(**fmt_substr))
+		++*fmt_substr;
+	while (**fmt_substr == 'h' && (h += 1) || **fmt_substr == 'l' && (l += 1))
+		++*fmt_substr;
+	if (isConversion(**fmt_substr) && !(h && l) && h < 3 && l < 3)
+		return;
+	write(1, "format string: \"", 16);
+	h = write_length(start, 0);
+	write(1, start, h);
+	write(1, "\" erroneous format string-- length modifier incorrect. Exiting.\n", 64);
+	exit(1);
+}
+
+void	error_check(char *fmt_str)
+{
+	while (*fmt_str)
+	{
+		if (*fmt_str == '%' && *(fmt_str + 1) != '%')
+			check_format_correct(&fmt_str);
+		else if (*fmt_str == '%')
+			fmt_str += 2;
+		else
+			fmt_str++;
+	}
 }
 
 int	ft_printf(char *fmt_str, ...)
@@ -667,6 +672,7 @@ int	ft_printf(char *fmt_str, ...)
 	int bytes_printed;
 	int len;
 
+	error_check(fmt_str);
 	bytes_printed = 0;
 	va_start(ap, fmt_str);
 	while (*fmt_str)
@@ -675,7 +681,7 @@ int	ft_printf(char *fmt_str, ...)
 			bytes_printed += dispatcher(ap, &fmt_str);
 		else if (*fmt_str)
 		{
-			len = write_length(fmt_str);
+			len = write_length(fmt_str, 1);
 			bytes_printed += write(1, fmt_str, len);
 			fmt_str += len;
 		}
