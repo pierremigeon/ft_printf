@@ -1,5 +1,8 @@
 
 
+%[flag][min width][precision][length modifier][conversion specifier]
+
+
 Any flags past the type converion are just treated as characters to print:
         printf ("%is", 5); prints "5s"
         printf ("%ih", 5); prints "5h"

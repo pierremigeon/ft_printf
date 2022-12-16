@@ -32,6 +32,20 @@ int	main()
 
 	setbuf(stdout, NULL);
 
+	/*
+		Some initial tests for error handling for the string and for processing the h and l flags
+	*/
+
+	ft_printf("%hi\n", i);
+	ft_printf("%hhi\n", i);
+	//ft_printf("%hhhi\n", i);
+	ft_printf("%li\n", i);
+	ft_printf("%lli\n", i);
+	//ft_printf("%llli\n", i);
+	//ft_printf("%lhi\n", i);
+
+	//ft_printf("%i word %ll+i\n", i, i);
+
 
 /*
 	ft_printf must handle the cspdioOuUxX% flags.

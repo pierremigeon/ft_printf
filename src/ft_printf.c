@@ -448,6 +448,27 @@ int	standard_dispatch(va_list ap, char **fmt_substr, t_flags *flags)
 	return (out_b);
 }
 
+int	get_bin(char *fmt_substr)
+{
+	while (!isConversion(*fmt_substr))
+		fmt_substr++;
+	return ((*fmt_substr == 'd' || *fmt_substr == 'i') ? 1 : 0 || (*fmt_substr == 'o' || 
+		*fmt_substr == 'u' || *fmt_substr == 'x' || *fmt_substr == 'X') ? 5 : 0);
+}
+
+void	get_length_modifier(char **fmt_substr, t_flags *flags, va_list ap)
+{
+	int	bin;
+
+	if (!(bin = get_bin(*fmt_substr)))
+		return;
+	--bin;
+	while (!isConversion(**fmt_substr) && bin < 9)
+		if ((**fmt_substr == 'h' || **fmt_substr == 'l') && (*fmt_substr)++)
+			++bin;
+	flags->len_mod = bin;
+}
+
 int	check_z(char *c)
 {
 	if (*c != '0')
@@ -609,7 +630,8 @@ int	dispatcher(va_list ap, char **fmt_substr)
 	t_flags		*flags;
 
 	flags = get_flags(ap, fmt_substr);
-	return (functs[get_function(fmt_substr)](ap, fmt_substr, flags));
+	get_length_modifier(fmt_substr, flags, ap);
+	return (standard_dispatch(ap, fmt_substr, flags));
 }
 
 int	write_length(char *fmt_str, int x)

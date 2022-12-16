@@ -14,6 +14,7 @@ typedef struct 	s_flags
 	unsigned int	field_width;
 	unsigned int	*precision;
 	unsigned int	x;
+	unsigned int	len_mod;
 	unsigned char	new;
 	unsigned char	sign;
 }		t_flags;
