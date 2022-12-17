@@ -1,6 +1,8 @@
 #include "../includes/ft_printf.h"
 
 #include <assert.h>
+#include <limits.h>
+
 
 void	swap(int *a, int *b) 
 {
@@ -32,20 +34,11 @@ int	main()
 
 	setbuf(stdout, NULL);
 
-	/*
-		Some initial tests for error handling for the string and for processing the h and l flags
-	*/
+	unsigned int pqr = 42;
+	assert(ft_printf("%O\n", pqr) == printf("%O\n", pqr));
 
-	ft_printf("%hi\n", i);
-	ft_printf("%hhi\n", i);
-	//ft_printf("%hhhi\n", i);
-	ft_printf("%li\n", i);
-	ft_printf("%lli\n", i);
-	//ft_printf("%llli\n", i);
-	//ft_printf("%lhi\n", i);
-
-	//ft_printf("%i word %ll+i\n", i, i);
-
+	unsigned long long xyz = 0;
+	ft_printf("%lo\n", xyz - 1);
 
 /*
 	ft_printf must handle the cspdioOuUxX% flags.
@@ -690,6 +683,191 @@ int	a;
 	assert(ft_printf("%io%io\n", 5, 5) == printf("%io%io\n", 5, 5));
 
 
+
+	/*
+		Tests for size modifiers
+			1) %hi
+			2) %hhi
+			3) %li
+			4) %lli
+			5) %ho
+			6) %hu
+			7) %hx
+			8) %hX
+			9) %hho
+			10) %hhu
+			11) %hhx
+			12) %hhX
+			13) %lo
+			14) %lu
+			15) %lx
+			16) %lX
+			17) %llo
+			18) %llu
+			19) %llx
+			20) %llX
+	*/
+
+	//#1 %hi
+	int zero_count = 0;
+	for (short i = SHRT_MIN; i <= SHRT_MAX && zero_count < 2; i++) {
+		assert(ft_printf("%hi\n", i) == printf("%hi\n", i));
+		if (i == 0)
+			++zero_count;
+	}
+
+	//#2 %hhi
+	zero_count = 0;
+	for (char i = CHAR_MIN; i <= CHAR_MAX && zero_count < 2; i++) {
+		assert(ft_printf("%hhi\n", i) == printf("%hhi\n", i));
+		if (i == 0)
+			++zero_count;
+	}
+	
+	//#3 %li
+	for (long i = 0, y = LONG_MIN; i < 5; i++, y += ((LONG_MAX / 2) + 1)) {
+		assert(ft_printf("%li\n", y - 1) == printf("%li\n", y - 1));
+		assert(ft_printf("%li\n", y) == printf("%li\n", y));
+		assert(ft_printf("%li\n", y + 1) == printf("%li\n", y + 1));
+	}
+	
+	//#4 %lli
+	for (struct {int i; long long y;} two_vars = {0, LLONG_MIN}; two_vars.i < 5 ; two_vars.i++, two_vars.y += ((LLONG_MAX / 2) + 1)) {
+		assert(ft_printf("\t%lli\n", two_vars.y - 1) == printf("\t%lli\n", two_vars.y - 1));
+		assert(ft_printf("\t%lli\n", two_vars.y) == printf("\t%lli\n", two_vars.y));
+		assert(ft_printf("\t%lli\n", two_vars.y + 1) == printf("\t%lli\n", two_vars.y + 1));
+	}
+
+	//#5 %ho unsigned short
+	zero_count = 0;
+	for (unsigned short i = 0; i <= USHRT_MAX && zero_count < 2; i++) {
+		assert(ft_printf("%ho\n", i) == printf("%ho\n", i));
+		if (i == 0)
+			++zero_count;
+	}
+	
+
+	//#6 %hu
+	zero_count = 0;
+	for (unsigned short i = 0; i <= USHRT_MAX && zero_count < 2; i++) {
+		assert(ft_printf("%hu\n", i) == printf("%hu\n", i));
+		if (i == 0)
+			++zero_count;
+	}
+
+	//#7 %hx
+	zero_count = 0;
+	for (unsigned short i = 0; i <= USHRT_MAX && zero_count < 2; i++) {
+		assert(ft_printf("%hx\n", i) == printf("%hx\n", i));
+		if (i == 0)
+			++zero_count;
+	}
+
+	//#8 %hX
+	zero_count = 0;
+	for (unsigned short i = 0; i <= USHRT_MAX && zero_count < 2; i++) {
+		assert(ft_printf("%hX\n", i) == printf("%hX\n", i));
+		if (i == 0)
+			++zero_count;
+	}
+
+	//#9 %hho unsigned character
+	zero_count = 0;
+	for (unsigned char i = 0; i <= UCHAR_MAX && zero_count < 2; i++) {
+		assert(ft_printf("%hho\n", i) == printf("%hho\n", i));
+		if (i == 0)
+			++zero_count;
+	}
+	
+
+	//#10 %hhu
+	zero_count = 0;
+	for (unsigned char i = 0; i <= UCHAR_MAX && zero_count < 2; i++) {
+		assert(ft_printf("%hhu\n", i) == printf("%hhu\n", i));
+		if (i == 0)
+			++zero_count;
+	}
+
+	//#11 %hhx
+	zero_count = 0;
+	for (unsigned char i = 0; i <= UCHAR_MAX && zero_count < 2; i++) {
+		assert(ft_printf("%hhx\n", i) == printf("%hhx\n", i));
+		if (i == 0)
+			++zero_count;
+	}
+
+	//#12 %hhX
+	zero_count = 0;
+	for (unsigned char i = 0; i <= UCHAR_MAX && zero_count < 2; i++) {
+		assert(ft_printf("%hhX\n", i) == printf("%hhX\n", i));
+		if (i == 0)
+			++zero_count;
+	}
+
+
+	//#13 %lo unsigned long
+	for (unsigned long i = 0, y = 0; i < 5; i++, y += ((ULONG_MAX / 2) + 1)) {
+		printf("%%lo\n");
+		assert(ft_printf("%lo\n", y - 1) == printf("%lo\n", y - 1));
+		assert(ft_printf("%lo\n", y) == printf("%lo\n", y));
+		assert(ft_printf("%lo\n", y + 1) == printf("%lo\n", y + 1));
+	}
+
+	//#14 %lu unsigned long
+	for (unsigned long i = 0, y = 0; i < 5; i++, y += ((ULONG_MAX / 2) + 1)) {
+		printf("%%lu\n");
+		assert(ft_printf("%lu\n", y - 1) == printf("%lu\n", y - 1));
+		assert(ft_printf("%lu\n", y) == printf("%lu\n", y));
+		assert(ft_printf("%lu\n", y + 1) == printf("%lu\n", y + 1));
+	}
+
+	//#15 %lx unsigned long
+	for (unsigned long i = 0, y = 0; i < 5; i++, y += ((ULONG_MAX / 2) + 1)) {
+		printf("%%lx\n");
+		assert(ft_printf("%lx\n", y - 1) == printf("%lx\n", y - 1));
+		assert(ft_printf("%lx\n", y) == printf("%lx\n", y));
+		assert(ft_printf("%lx\n", y + 1) == printf("%lx\n", y + 1));
+	}
+
+	//#16 %lX unsigned long
+	for (unsigned long i = 0, y = 0; i < 5; i++, y += ((ULONG_MAX / 2) + 1)) {
+		printf("%%lX\n");
+		assert(ft_printf("%lX\n", y - 1) == printf("%lX\n", y - 1));
+		assert(ft_printf("%lX\n", y) == printf("%lX\n", y));
+		assert(ft_printf("%lX\n", y + 1) == printf("%lX\n", y + 1));
+	}
+
+	//#17 %llo unsigned long long 
+	for (unsigned long long i = 0, y = 0; i < 5; i++, y += ((ULONG_MAX / 2) + 1)) {
+		printf("%%llo\n");
+		assert(ft_printf("%llo\n", y - 1) == printf("%llo\n", y - 1));
+		assert(ft_printf("%llo\n", y) == printf("%llo\n", y));
+		assert(ft_printf("%llo\n", y + 1) == printf("%llo\n", y + 1));
+	}
+
+	//#18 %llu unsigned long long 
+	for (unsigned long long i = 0, y = 0; i < 5; i++, y += ((ULONG_MAX / 2) + 1)) {
+		printf("%%llu\n");
+		assert(ft_printf("%llu\n", y - 1) == printf("%llu\n", y - 1));
+		assert(ft_printf("%llu\n", y) == printf("%llu\n", y));
+		assert(ft_printf("%llu\n", y + 1) == printf("%llu\n", y + 1));
+	}
+	
+	//#19 %llx unsigned long long 
+	for (unsigned long long i = 0, y = 0; i < 5; i++, y += ((ULONG_MAX / 2) + 1)) {
+		printf("%%llx\n");
+		assert(ft_printf("%llx\n", y - 1) == printf("%llx\n", y - 1));
+		assert(ft_printf("%llx\n", y) == printf("%llx\n", y));
+		assert(ft_printf("%llx\n", y + 1) == printf("%llx\n", y + 1));
+	}
+
+	//#20 %llX unsigned long long 
+	for (unsigned long long i = 0, y = 0; i < 5; i++, y += ((ULONG_MAX / 2) + 1)) {
+		printf("%%llX\n");
+		assert(ft_printf("%llX\n", y - 1) == printf("%llX\n", y - 1));
+		assert(ft_printf("%llX\n", y) == printf("%llX\n", y));
+		assert(ft_printf("%llX\n", y + 1) == printf("%llX\n", y + 1));
+	}
 
 
 

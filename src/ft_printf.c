@@ -32,7 +32,7 @@ int	prefix(int base, int depth, int cap)
 	return ((base == 16) ? depth : 1);
 }
 
-long	abso_int(long i)
+long long	abso_int(long long i)
 {
 	if (i < 0)
 		return (i * -1);
@@ -46,20 +46,19 @@ double	abso_double(double i)
 	return (i);
 }
 
-void	init_values(long *i, int *o, int *d, int depth)
+void	init_values(int *o, int *d, int depth)
 {
-	*i = abso_int(*i);
 	*o = 0;
 	*d = depth;
 }
 
-int    putnbr_base(long i, int base, int depth, t_flags *flags)
+int    putnbr_base(unsigned long long i, int base, int depth, t_flags *flags)
 {
 	char 		out;
 	static int 	d;
 	int		o;
 
-	init_values(&i, &o, &d, depth);
+	init_values(&o, &d, depth);
 	if (i >= base)
 		o += putnbr_base(i / base, base, depth + 1, flags);
 	if (d == depth && ishash(flags))
@@ -88,19 +87,19 @@ int	get_base(char c)
 		return (10);
 	if (c == 'x' || c == 'X' || c == 'p')
 		return (16);
-        if (c == 'o')
+        if (c == 'o' || c == 'O')
 		return (8);
 	return (0);
 }
 
-int	print_start(t_flags *flags, long i, int x)
+int	print_start(t_flags *flags, unsigned long long i)
 {
-	if (i < 0)
-		return ((x) ? write(1, "-", 1) : 1);
+	if (i < 0 || (flags->sign && !(flags->sign = 0)))
+		return (write(1, "-", 1));
 	if (flags->flags & 8 && i >= 0)
-		return ((x) ? write(1, " ", 1) : 1);
+		return (write(1, " ", 1));
 	if (flags->flags & 16 && flags->flags != 17 && i >= 0)
-		return ((x) ? write(1, "+", 1) : 1);
+		return (write(1, "+", 1));
 	return (0);
 }
 
@@ -127,7 +126,7 @@ char	*ft_strnew2(size_t size, int c)
 	return (str);
 }
 
-int	process_field_width(int width, int x, long i, t_flags *flags)
+int	process_field_width(int width, int x, unsigned long long i, t_flags *flags)
 {
 	char 	*blanks;
 	int	out;
@@ -142,7 +141,7 @@ int	process_field_width(int width, int x, long i, t_flags *flags)
 		out += write(1, blanks, width);
 	(blanks) ? free(blanks) : 1;
 	if (x == 1)
-		out += print_start(flags, i, 1);
+		out += print_start(flags, i);
 	blanks = (neg) ? ft_strnew2(save, '0') : NULL;
 	(blanks) ? out += write(1, blanks, save) : 1;
 	if (flags->flags & 4 && flags->flags ^ 4)
@@ -196,16 +195,15 @@ int	print_string(va_list ap, char **fmt_substr, t_flags *flags)
 	return (out_bytes + ft_putstrnl(s, flags->precision[0], w_remain[1]));
 }
 
-int	numlen_base(long i, int base)
+int	numlen_base(unsigned long long i, int base)
 {
 	int	len;
-	
+
+	len = 0;
 	if (i == 0)
 		return (1);
 	if (base == 0)
 		return (0);
-	len = 0;
-	i = abso_int(i);
 	while (i > 0)
 	{
 		++len;
@@ -253,10 +251,10 @@ int	exclusion_test(t_flags *flags, long i)
 
 int	has_pad(t_flags *flags, long i)
 {
-	return ((flags->flags == 8 || flags->flags == 16) || i < 0);
+	return (flags->flags == 8 || flags->flags == 16 || flags->sign || i < 0);
 }
 
-int	padding(t_flags *flags, long i, int base, char cs)
+int	padding(t_flags *flags, unsigned long long i, int base, char cs)
 {
 	int 	int_length;
 	int	out_bytes;
@@ -276,7 +274,7 @@ int	padding(t_flags *flags, long i, int base, char cs)
 		else
 			reduce_field_width(flags, out_bytes + int_length, cs);
 	}
-	if (!x && ((out_bytes += print_start(flags, i, 1)) || 1))
+	if (!x && ((out_bytes += print_start(flags, i)) || 1))
 		reduce_field_width(flags, int_length + out_bytes, cs);
 	if (flags->flags & 4 && (cs != 'f' || flags->new > 0))
 		flags->flags = 17;
@@ -359,7 +357,7 @@ int	print_fraction(double f, t_flags *flags)
 	return (0);
 }
 
-long	proc_fi(double *f, int i, char fmt_c, t_flags *flags)
+unsigned long long	proc_fi(double *f, unsigned long long i, char fmt_c, t_flags *flags)
 {
 	long long	temp;
 
@@ -375,9 +373,11 @@ long	proc_fi(double *f, int i, char fmt_c, t_flags *flags)
 			return(print_fraction(*f, flags));
 		return (!(flags->new = 2));
 	} else if (fmt_c == 'f') {
+		if (*f < 0)
+			flags->sign = 1;
 		temp = *f;
 		*f -= temp;
-		return (temp);
+		return (abso_int(temp));
 	}
 	if (fmt_c != 'f')
 		flags->new = 1;
@@ -393,10 +393,57 @@ int	vzed(t_flags *flags)
 	return(1);
 }
 
-int	define_numbers(va_list ap, long	int *i, double *f, char fmt_c)
+
+unsigned long long	h_di(va_list ap, t_flags *flags)
 {
-	if (fmt_c != 'f')
-		*i = (fmt_c != 'u') ? (long int)va_arg(ap, int) : va_arg(ap, unsigned int);
+	int	out;
+
+	out = va_arg(ap, int);
+	if (out < 0)
+	{
+		out *= -1;
+		flags->sign = 1;
+	}
+	return (out);
+}
+
+unsigned long long	h_o(va_list ap, t_flags *flags)
+{
+	unsigned int	out;
+
+	out = va_arg(ap, unsigned int);
+	return (out);
+}
+
+unsigned long long	l_o(va_list ap, t_flags *flags)
+{
+	unsigned long long	out;
+
+	out = va_arg(ap, unsigned long long);
+	return (out);
+}
+
+unsigned long long	l_di(va_list ap, t_flags *flags)
+{
+	long long	out;
+	
+	out = va_arg(ap, long long);
+	if (out < 0)
+	{
+		out *= -1;
+		flags->sign = 1;
+	}
+	return (out);
+}
+
+int	define_numbers(va_list ap, unsigned long long *i, double *f, t_tuple *format)
+{
+	funky	funs[4] = { &h_di, &l_di, &h_o, &l_o };
+
+	if (format->c != 'f' && format->flags->len_mod != 100)
+		*i = funs[format->flags->len_mod](ap, format->flags);
+	else if (format->c != 'f')
+		*i = (format->c != 'u') ? h_di(ap, format->flags) : va_arg(ap, unsigned int);
 	else 
 		*f = va_arg(ap, double);
 	return (0);
@@ -419,16 +466,28 @@ int	clean_slate(t_flags *flags, double f)
 	return (out);
 }
 
+
+t_tuple		*grab_tuple(char c, t_flags *flags)
+{
+	t_tuple		*format_info;
+
+	if (!(format_info = (t_tuple *)malloc(sizeof(t_tuple) * 1)))
+		exit(1);
+	format_info->c = c;
+	format_info->flags = flags;
+	return (format_info);
+}
+
 int	standard_dispatch(va_list ap, char **fmt_substr, t_flags *flags)
 {
-	long		i;
-	double		f;
-	int		base;
-	int		out_b;
+	unsigned long long	i;
+	double			f;
+	int			base;
+	int			out_b;
 
 	if (**fmt_substr == 's' || **fmt_substr == 'c')
 		return (print_string(ap, fmt_substr, flags));
-	out_b = define_numbers(ap, &i, &f, **fmt_substr);
+	out_b = define_numbers(ap, &i, &f, grab_tuple(**fmt_substr, flags));
 	base = get_base(**fmt_substr);
 	while ((i = proc_fi(&f, i, **fmt_substr, flags)) || vzed(flags))
 	{
@@ -448,24 +507,46 @@ int	standard_dispatch(va_list ap, char **fmt_substr, t_flags *flags)
 	return (out_b);
 }
 
-int	get_bin(char *fmt_substr)
+int	size_special(char *fmt_substr)
 {
-	while (!isConversion(*fmt_substr))
-		fmt_substr++;
-	return ((*fmt_substr == 'd' || *fmt_substr == 'i') ? 1 : 0 || (*fmt_substr == 'o' || 
-		*fmt_substr == 'u' || *fmt_substr == 'x' || *fmt_substr == 'X') ? 5 : 0);
+	if (*fmt_substr == 'O' || *fmt_substr == 'U')
+		return (4);
+	if (*fmt_substr == 'D')
+		return (2); 
+	if (*fmt_substr == 'C')
+		return (5);
+	if (*fmt_substr == 'S')
+		return (6);
+	return (0); 
+}
+
+int	is_lmod(char c)
+{
+	return (c == 'h' || c == 'l');
+}
+
+int	get_bin(char **fmt_substr)
+{
+	int out;
+
+	out = 1;
+	while (!isConversion(**fmt_substr) && !size_special(*fmt_substr))
+		++(*fmt_substr);
+	if (!is_lmod(*(*fmt_substr - 1)))
+		return (size_special(*fmt_substr));
+	if (*(*fmt_substr - 1) == 'l')
+		out += 1;
+	return ((**fmt_substr == 'd' || **fmt_substr == 'i') ? out : 0 || (**fmt_substr == 'o' || 
+		**fmt_substr == 'u' || **fmt_substr == 'x' || **fmt_substr == 'X') ? 2 + out : 0);
 }
 
 void	get_length_modifier(char **fmt_substr, t_flags *flags, va_list ap)
 {
 	int	bin;
 
-	if (!(bin = get_bin(*fmt_substr)))
+	if (!(bin = get_bin(fmt_substr)))
 		return;
-	--bin;
-	while (!isConversion(**fmt_substr) && bin < 9)
-		if ((**fmt_substr == 'h' || **fmt_substr == 'l') && (*fmt_substr)++)
-			++bin;
+	bin -= 1;
 	flags->len_mod = bin;
 }
 
@@ -590,6 +671,7 @@ t_flags		*get_t_flags(va_list ap, char *fmt_substr)
 	out->precision = get_precision(ap, fmt_substr);
 	out->new = 0;
 	out->sign = 0;
+	out->len_mod = 100;
 	if (out->precision[0] > out->field_width && !(check_f(fmt_substr)))
 		out->field_width = 0;
 	return (out);
@@ -666,8 +748,11 @@ void	check_format_correct(char **fmt_substr)
 		++*fmt_substr;
 	while (**fmt_substr == 'h' && (h += 1) || **fmt_substr == 'l' && (l += 1))
 		++*fmt_substr;
-	if (isConversion(**fmt_substr) && !(h && l) && h < 3 && l < 3)
+	if (size_special(*fmt_substr) && !(h || l))
 		return;
+	else if (!size_special(*fmt_substr))
+		if (isConversion(**fmt_substr) && !(h && l) && h < 3 && l < 3)
+			return;
 	write(1, "format string: \"", 16);
 	h = write_length(start, 0);
 	write(1, start, h);
