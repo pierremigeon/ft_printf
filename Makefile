@@ -6,7 +6,7 @@ OUT = ft_printf
 
 make:
 	@if [ ! -e $(LIB) ]; then make -C ./libft; fi
-	gcc $(MAIN) $(SRC) $(LIB) -o $(OUT)
+	@gcc $(MAIN) $(SRC) $(LIB) -o $(OUT)
 
 runtest:
 	gcc -g $(MAIN) $(SRC) $(LIB) -o $(OUT)
@@ -16,7 +16,7 @@ assert_test: refresh
 	@make run_compare -C test_suite
 
 refresh:
-	@if [ ! -e ./$(OUT) ]; then make -C .; fi
+	@make -C .
 	@./$(OUT) > ./test_suite/assert_test_output_raw.txt
 	
 clean:

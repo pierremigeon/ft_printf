@@ -3,9 +3,9 @@
 #include <fcntl.h>
 #include <stdlib.h>
 
-void	free_strings(char **s)
+void	free_strings(char **s, int x)
 {
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < x; i++) {
 		free(s[i]);
 		s[i] = NULL;
 	}
@@ -16,7 +16,6 @@ int	check_equal(char **strings)
 	int	check;
 
 	check = ft_strcmp(strings[1], strings[2]);
-	//free_strings(strings);
 	return (!(check));
 }
 
@@ -40,8 +39,9 @@ int	main()
 	int	i;
 	int	correct;
 	int	wrong;
+	int	skip;
 
-	correct = wrong = i = 0;
+	correct = wrong = i = skip = 0;
 	compare = init_compare(3);
 	fd = open("assert_test_output_filtered.txt", O_RDONLY);	
 	if (fd == -1)
@@ -49,6 +49,9 @@ int	main()
 			exit(1);
 	while ((r = get_next_line(fd, &compare[i]) > 0))
 	{
+		if (!(ft_strcmp(compare[i], "*skip*")))
+			if ((!skip && (skip = 1) || skip && !(skip = 0) && (i = -1)))
+				free_strings(compare, 1);
 		if (compare[1] && compare[2])
 		{
 			if(check_equal(compare))
@@ -58,8 +61,10 @@ int	main()
 				printf("%s\n%s\n%s\n", compare[0], compare[1], compare[2]);
 				wrong++;
 			}
-			free_strings(compare);
+			free_strings(compare, 3);
 		}
+		if (skip)
+			i = -1;
 		i = (i < 2) ? i + 1 : 0;
 	}
 	if (wrong == 0)

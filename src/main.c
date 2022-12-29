@@ -39,7 +39,7 @@ int	main()
 	assert(ft_printf("%O\n", pqr) == printf("%O\n", pqr));
 
 	unsigned long long xyz = 0;
-	ft_printf("%lo\n", xyz - 1);
+	//ft_printf("%lo\n", xyz - 1);
 
 /*
 	ft_printf must handle the cspdioOuUxX% flags.
@@ -95,13 +95,14 @@ int	main()
 
 	printf("assert(ft_printf(\"\\n\") == printf(\"\\n\"));\n");
 	assert(ft_printf("\n") == printf("\n"));
+printf("*skip*\n");
 	printf("assert(ft_printf(\"\\n\\n\") == printf(\"\\n\\n\"));\n");
 	assert(ft_printf("\n\n") == printf("\n\n"));
 	printf("assert(ft_printf(\"\\n\\n\\n\") == printf(\"\\n\\n\\n\"));\n");
 	assert(ft_printf("\n\n\n") == printf("\n\n\n"));
 	printf("assert(ft_printf(\"\\n \\n\") == printf(\"\\n \\n\"));\n");
 	assert(ft_printf("\n \n") == printf("\n \n"));
-
+printf("*skip*\n");
 	printf("assert(ft_printf(\"\\t\\n\") == printf(\"\\t\\n\"));\n");
 	assert(ft_printf("\t\n") == printf("\t\n"));
 	printf("assert(ft_printf(\"\\t\\t\\n\") == printf(\"\\t\\t\\n\"));\n");
@@ -117,7 +118,7 @@ int	main()
 
 	printf("assert(ft_printf(\"\\\\p\\n\") == printf(\"\\\\p\\n\"));\n");
 	assert(ft_printf("\\p\n") == printf("\\p\n"));
-
+printf("*skip*\n");
 	printf("assert(ft_printf(\"\\a\") == printf(\"\\a\"));\n");
 	assert(ft_printf("\a") == printf("\a"));
 	printf("assert(ft_printf(\"\\a\\a\") == printf(\"\\a\\a\"));\n");
@@ -198,8 +199,90 @@ int	main()
 	assert(ft_printf("\?\?\?") == printf("\?\?\?"));
 	printf("assert(ft_printf(\"\\? \\?\") == printf(\"\\? \\?\"));\n");
 	assert(ft_printf("\? \?") == printf("\? \?"));
+printf("\n*skip*\n");
 
+// SAME CODE BLOCK AS PREVIOUS 80 lines, except including newlines for the purpose of verfiying equal character output (see test_suite)
 
+	printf("assert(ft_printf(\"\\a\\n\") == printf(\"\\a\\n\"));\n");
+	assert(ft_printf("\a\n") == printf("\a\n"));
+	printf("assert(ft_printf(\"\\a\\a\\n\") == printf(\"\\a\\a\\n\"));\n");
+	assert(ft_printf("\a\a\n") == printf("\a\a\n"));
+	printf("assert(ft_printf(\"\\a\\a\\a\\n\") == printf(\"\\a\\a\\a\\n\"));\n");
+	assert(ft_printf("\a\a\a\n") == printf("\a\a\a\n"));
+	printf("assert(ft_printf(\"\\a \\a\\n\") == printf(\"\\a \\a\\n\"));\n");
+	assert(ft_printf("\a \a\n") == printf("\a \a\n"));
+
+	printf("assert(ft_printf(\"\\b\\n\") == printf(\"\\b\\n\"));\n");
+	assert(ft_printf("\b\n") == printf("\b\n"));
+	printf("assert(ft_printf(\"\\b\\b\\n\") == printf(\"\\b\\b\\n\"));\n");
+	assert(ft_printf("\b\b\n") == printf("\b\b\n"));
+	printf("assert(ft_printf(\"\\b\\b\\b\\n\") == printf(\"\\b\\b\\b\\n\"));\n");
+	assert(ft_printf("\b\b\b\n") == printf("\b\b\b\n"));
+	printf("assert(ft_printf(\"\\b \\b\\n\") == printf(\"\\b \\b\\n\"));\n");
+	assert(ft_printf("\b \b\n") == printf("\b \b\n"));
+
+	printf("assert(ft_printf(\"\\f\\n\") == printf(\"\\f\\n\"));\n");
+	assert(ft_printf("\f\n") == printf("\f\n"));
+	printf("assert(ft_printf(\"\\f\\f\\n\") == printf(\"\\f\\f\\n\"));\n");
+	assert(ft_printf("\f\f\n") == printf("\f\f\n"));
+	printf("assert(ft_printf(\"\\f\\f\\f\\n\") == printf(\"\\f\\f\\f\\n\"));\n");
+	assert(ft_printf("\f\f\f\n") == printf("\f\f\f\n"));
+	printf("assert(ft_printf(\"\\f \\f\\n\") == printf(\"\\f \\f\\n\"));\n");
+	assert(ft_printf("\f \f\n") == printf("\f \f\n"));
+
+	printf("assert(ft_printf(\"\\r\\n\") == printf(\"\\r\\n\"));\n");
+	assert(ft_printf("\r\n") == printf("\r\n"));
+	printf("assert(ft_printf(\"\\r\\r\\n\") == printf(\"\\r\\r\\n\"));\n");
+	assert(ft_printf("\r\r\n") == printf("\r\r\n"));
+	printf("assert(ft_printf(\"\\r\\r\\r\\n\") == printf(\"\\r\\r\\r\\n\"));\n");
+	assert(ft_printf("\r\r\r\n") == printf("\r\r\r\n"));
+	printf("assert(ft_printf(\"\\r \\r\\n\") == printf(\"\\r \\r\\n\"));\n");
+	assert(ft_printf("\r \r\n") == printf("\r \r\n"));
+
+	printf("assert(ft_printf(\"\\v\\n\") == printf(\"\\v\\n\"));\n");
+	assert(ft_printf("\v\n") == printf("\v\n"));
+	printf("assert(ft_printf(\"\\v\\v\\n\") == printf(\"\\v\\v\\n\"));\n");
+	assert(ft_printf("\v\v\n") == printf("\v\v\n"));
+	printf("assert(ft_printf(\"\\v\\v\\v\\n\") == printf(\"\\v\\v\\v\\n\"));\n");
+	assert(ft_printf("\v\v\v\n") == printf("\v\v\v\n"));
+	printf("assert(ft_printf(\"\\v \\v\\n\") == printf(\"\\v \\v\\n\"));\n");
+	assert(ft_printf("\v \v\n") == printf("\v \v\n"));
+
+	printf("assert(ft_printf(\"\\'\\n\") == printf(\"\\'\\n\"));\n");
+	assert(ft_printf("\'\n") == printf("\'\n"));
+	printf("assert(ft_printf(\"\\'\\'\\n\") == printf(\"\\'\\'\\n\"));\n");
+	assert(ft_printf("\'\'\n") == printf("\'\'\n"));
+	printf("assert(ft_printf(\"\\'\\'\\'\\n\") == printf(\"\\'\\'\\'\\n\"));\n");
+	assert(ft_printf("\'\'\'\n") == printf("\'\'\'\n"));
+	printf("assert(ft_printf(\"\\' \\'\\n\") == printf(\"\\' \\'\\n\"));\n");
+	assert(ft_printf("\' \'\n") == printf("\' \'\n"));
+
+	printf("assert(ft_printf(\"\\\"\\n\") == printf(\"\\\"\\n\"));\n");
+	assert(ft_printf("\"\n") == printf("\"\n"));
+	printf("assert(ft_printf(\"\\\"\\\"\\n\") == printf(\"\\\"\\\"\\n\"));\n");
+	assert(ft_printf("\"\"\n") == printf("\"\"\n"));
+	printf("assert(ft_printf(\"\\\"\\\"\\\"\\n\") == printf(\"\\\"\\\"\\\"\\n\"));\n");
+	assert(ft_printf("\"\"\"\n") == printf("\"\"\"\n"));
+	printf("assert(ft_printf(\"\\\" \\\"\\n\") == printf(\"\\\" \\\"\\n\"));\n");
+	assert(ft_printf("\" \"\n") == printf("\" \"\n"));
+
+	printf("assert(ft_printf(\"\\?\\n\") == printf(\"\\?\\n\"));\n");
+	assert(ft_printf("\?\n") == printf("\?\n"));
+	printf("assert(ft_printf(\"\\?\\?\\n\") == printf(\"\\?\\?\\n\"));\n");
+	assert(ft_printf("\?\?\n") == printf("\?\?\n"));
+	printf("assert(ft_printf(\"\\?\\?\\?\\n\") == printf(\"\\?\\?\\?\\n\"));\n");
+	assert(ft_printf("\?\?\?\n") == printf("\?\?\?\n"));
+	printf("assert(ft_printf(\"\\? \\?\\n\") == printf(\"\\? \\?\\n\"));\n");
+	assert(ft_printf("\? \?\n") == printf("\? \?\n"));
+
+	printf("assert(ft_printf(\"\\?\\n\") == printf(\"\\?\\n\"));\n");
+	assert(ft_printf("\?\n") == printf("\?\n"));
+	printf("assert(ft_printf(\"\\?\\?\\n\") == printf(\"\\?\\?\\n\"));\n");
+	assert(ft_printf("\?\?\n") == printf("\?\?\n"));
+	printf("assert(ft_printf(\"\\?\\?\\?\\n\") == printf(\"\\?\\?\\?\\n\"));\n");
+	assert(ft_printf("\?\?\?\n") == printf("\?\?\?\n"));
+	printf("assert(ft_printf(\"\\? \\?\\n\") == printf(\"\\? \\?\\n\"));\n");
+	assert(ft_printf("\? \?\n") == printf("\? \?\n"));
 
 /*
 	%% non-existing and %% existing flags
@@ -235,11 +318,11 @@ int	main()
 	assert(ft_printf("%s%s\n", &z, &z) == printf("%s%s\n", &z, &z));
 	printf("assert(ft_printf(\"%%s %%s\\n\", %s, %s) == printf(\"%%s %%s\\n\", %s, %s));\n", &z, &z, &z, &z);
 	assert(ft_printf("%s %s\n", &z, &z) == printf("%s %s\n", &z, &z));
-	printf("assert(ft_printf(\"%%s\\n\", \"\") == printf(\"%%s\\n\", \"\"));\n", "", "");
+	printf("assert(ft_printf(\"%%s\\n\", \"\") == printf(\"%%s\\n\", \"\"));\n");
 	assert(ft_printf("%s\n", "") == printf("%s\n", ""));
-	printf("assert(ft_printf(\"%%s%%s\\n\", \"\", \"\") == printf(\"%%s%%s\\n\", \"\", \"\"));\n", "", "", "", "");
+	printf("assert(ft_printf(\"%%s%%s\\n\", \"\", \"\") == printf(\"%%s%%s\\n\", \"\", \"\"));\n");
 	assert(ft_printf("%s%s\n", "", "") == printf("%s%s\n", "", ""));
-	printf("assert(ft_printf(\"%%s %%s\\n\", \"\", \"\") == printf(\"%%s %%s\\n\", \"\", \"\"));\n", "", "", "", "");
+	printf("assert(ft_printf(\"%%s %%s\\n\", \"\", \"\") == printf(\"%%s %%s\\n\", \"\", \"\"));\n");
 	assert(ft_printf("%s %s\n", "", "") == printf("%s %s\n", "", ""));
 	printf("assert(ft_printf(\"%%s\\n\", %s) == printf(\"%%s\\n\", %s));\n", zero_s, zero_s);
 	assert(ft_printf("%s\n", zero_s) == printf("%s\n", zero_s));
@@ -254,11 +337,11 @@ int	main()
 	assert(ft_printf("%c%c\n", z, z) == printf("%c%c\n", z, z));
 	printf("assert(ft_printf(\"%%c %%c\\n\", %c, %c) == printf(\"%%c %%c\\n\", %c, %c));\n", z, z, z, z);
 	assert(ft_printf("%c %c\n", z, z) == printf("%c %c\n", z, z));
-	printf("assert(ft_printf(\"%%c\\n\", '\\0') == printf(\"%%c\\n\", '\\0'));\n", '\0', '\0');
+	printf("assert(ft_printf(\"%%c\\n\", \'\\0\') == printf(\"%%c\\n\", \'\\0\'));\n");
 	assert(ft_printf("%c\n", '\0') == printf("%c\n", '\0'));
-	printf("assert(ft_printf(\"%%c%%c\\n\", '\\0', '\\0') == printf(\"%%c%%c\\n\", '\\0', '\\0'));\n", '\0', '\0', '\0', '\0');
+	printf("assert(ft_printf(\"%%c%%c\\n\", \'\\0\', \'\\0\') == printf(\"%%c%%c\\n\", \'\\0\', \'\\0\'));\n");
 	assert(ft_printf("%c%c\n", '\0', '\0') == printf("%c%c\n", '\0', '\0'));
-	printf("assert(ft_printf(\"%%c %%c\\n\", '\\0', '\\0') == printf(\"%%c %%c\\n\", '\\0', '\\0'));\n", '\0', '\0', '\0', '\0');
+	printf("assert(ft_printf(\"%%c %%c\\n\", \'\\0\', \'\\0\') == printf(\"%%c %%c\\n\", \'\\0\', \'\\0\'));\n");
 	assert(ft_printf("%c %c\n", '\0', '\0') == printf("%c %c\n", '\0', '\0'));
 	printf("assert(ft_printf(\"%%c\\n\", %c) == printf(\"%%c\\n\", %c));\n", *zero_s, *zero_s);
 	assert(ft_printf("%c\n", *zero_s) == printf("%c\n", *zero_s));

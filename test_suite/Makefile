@@ -21,6 +21,11 @@ run_compare: filter
 	@tail -n 1 failed_tests.txt > summary.txt
 	@make c_lite
 	@echo "# -> Done...Summary and failed tests in directory\n"
+
+run_test: filter
+	@gcc -g $(SRC) $(LIB) -o $(OUT)
+	lldb $(OUT)	
+
 see:
 	less ./Makefile
 
@@ -28,6 +33,7 @@ c_lite:
 	@rm -f assert_test_output_raw.txt
 	@rm -f assert_test_output_filtered.txt
 	@rm -f $(OUT)
+	@if [ -e ./$(OUT).dSYM ]; then rm -rf ./$(OUT).dSYM; fi
 
 clean: c_lite
 	@rm -f summary.txt	
