@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <limits.h>
 
+#include <time.h>
+#include <stdlib.h>
 
 void	swap(int *a, int *b) 
 {
@@ -11,6 +13,32 @@ void	swap(int *a, int *b)
 	temp = *a;
 	*a = *b;
 	*b = temp;
+}
+
+int     numlen(long double i)
+{
+	long long int 	n = (long long int)i; 
+	int     	len;
+
+	len = 0;
+	if (i == 0)
+		return (1);
+	while (n > 0)
+	{
+		++len;
+		n /= 10;
+	}
+	return (len);
+}
+
+int	exponent(int x)
+{
+	int i = 1;
+	x++;
+
+	while(--x)
+		i *= 10;
+	return (i);
 }
 
 int	main()
@@ -699,6 +727,75 @@ for (int x = 32; x < 127; x++) {
 	float tests!!!! Project is developing nicely.
 */
 
+
+float f_l_o_a_t = 0;
+float f_l_o_a_t_original;
+int random;
+srand(time(NULL));
+
+for (int x = 0; x < 100; x++) {
+	random = rand() % 50;
+	f_l_o_a_t *= -1;
+	f_l_o_a_t *= random;
+	f_l_o_a_t_original = f_l_o_a_t;
+	for (int y = 0; y < 100; y++) {
+		if (y < 50) {
+			f_l_o_a_t += random;
+			f_l_o_a_t += f_l_o_a_t / exponent(numlen(f_l_o_a_t));
+			assert(ft_printf("\t\t\tWORD %.15f\n", f_l_o_a_t) == printf("\t\t\tWORD %.15f\n", f_l_o_a_t));
+		} else {
+			f_l_o_a_t -= random;
+			f_l_o_a_t -= f_l_o_a_t / exponent(numlen(f_l_o_a_t));
+			assert(ft_printf("\t\t\tWORD %.15f\n", f_l_o_a_t) == printf("\t\t\tWORD %.15f\n", f_l_o_a_t));
+		}
+		if (y == 50) { f_l_o_a_t = f_l_o_a_t_original; }
+	}
+}
+
+double f_l_o_a_t2 = 0;
+double f_l_o_a_t_original2;
+srand(time(NULL));
+
+for (int x = 0; x < 100; x++) {
+	random = rand() % 50;
+	f_l_o_a_t2 *= -1;
+	f_l_o_a_t2 *= random;
+	f_l_o_a_t_original2 = f_l_o_a_t2;
+	for (int y = 0; y < 100; y++) {
+		if (y < 50) {
+			f_l_o_a_t2 += random;
+			f_l_o_a_t2 += 0.1 * random;
+			assert(ft_printf("\t\t\tWORD %.15f\n", f_l_o_a_t2) == printf("\t\t\tWORD %.15f\n", f_l_o_a_t2));
+		} else {
+			f_l_o_a_t2 -= random;
+			f_l_o_a_t2 -= 0.1 * random;
+			assert(ft_printf("\t\t\tWORD %.15f\n", f_l_o_a_t2) == printf("\t\t\tWORD %.15f\n", f_l_o_a_t2));
+		}
+		if (y == 50) { f_l_o_a_t2 = f_l_o_a_t_original2; }
+	}
+}
+
+long double f_l_o_a_t3 = 0;
+long double f_l_o_a_t_original3;
+
+for (int x = 0; x < 100; x++) {
+	random = rand() % 50;
+	f_l_o_a_t3 *= -1;
+	f_l_o_a_t3 *= random;
+	f_l_o_a_t_original3 = f_l_o_a_t3;
+	for (int y = 0; y < 100; y++) {
+		if (y < 50) {
+			f_l_o_a_t3 += random;
+			f_l_o_a_t3 += 0.1 * random;
+			assert(ft_printf("\t\t\tWORD %.15Lf\n", f_l_o_a_t3) == printf("\t\t\tWORD %.15Lf\n", f_l_o_a_t3));
+		} else {
+			f_l_o_a_t3 -= random;
+			f_l_o_a_t3 -= 0.1 * random;
+			assert(ft_printf("\t\t\tWORD %.15Lf\n", f_l_o_a_t3) == printf("\t\t\tWORD %.15Lf\n", f_l_o_a_t3));
+		}
+		if (y == 50) { f_l_o_a_t3 = f_l_o_a_t_original3; }
+	}
+}
 
 int	a;
 // Tests of * and .* with 0 flags

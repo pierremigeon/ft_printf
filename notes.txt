@@ -2,29 +2,9 @@
 
 %[flag][min width][precision][length modifier][conversion specifier]
 
-
-Any flags past the type converion are just treated as characters to print:
-        printf ("%is", 5); prints "5s"
-        printf ("%ih", 5); prints "5h"
-	->no errors detected for these yet. Still writing tests.
-
-Errors to handle:
-        -input isn't type specified
-        -unequal number of arguments and conversing specifiers
-        -nonsensical combinations of input? %hhll
-        -Would be nice to throw compiler errors but more likely just print error messages.
-
-        %hlhllc throw an error
-        What does %lC do?
-        -cannot combine any of the length modifiers
-        -cannot do %lC or %lS
         -%lD is just a long
         -%lO is unsigned long
         -%lU is unsigned long
         -%lc is C is wchar_t
         -%ls or S is wchar_t converted to multibyte characters as if by wctomb() and printed up to '\0' or precision
 
-
-
-errors to fix:
-	-Need to use max unsigned to cast to from signed ints, keep track of if it's negative in the t_flags struct. Must handle variable overflow correctly for each datatype.
