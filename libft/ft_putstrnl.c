@@ -10,6 +10,10 @@ int	ft_putstrnl(char *str, size_t n, int free_s)
 	else
 		write(1, str, len);
 	if (free_s)
+	{
+		if (str[0] == '\0')
+			write(1, "\0", 1);
 		free(str);
+	}	
 	return ((len < n) ? len : n);
 }

@@ -24,6 +24,9 @@ clean:
 	@rm ft_printf
 	@if [ -e $(OUT).dSYM ]; then rm -rf $(OUT).dSYM && echo "Removing debugging directory"; fi
 
+fclean: clean
+	make fclean -C ./libft
+
 edit:
 	vi $(SRC)
 edit_m:

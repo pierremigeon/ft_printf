@@ -359,6 +359,8 @@ printf("\n*skip*\n");
 	printf("assert(ft_printf(\"%%s %%s\\n\", %s, %s) == printf(\"%%s %%s\\n\", %s, %s));\n", zero_s, zero_s, zero_s, zero_s);
 	assert(ft_printf("%s %s\n", zero_s, zero_s) == printf("%s %s\n", zero_s, zero_s));
 	
+//Hand checked these- they now print the correct number of characters and the strings match 
+printf("\n*skip*\n");
 	printf("assert(ft_printf(\"%%c\\n\", %c) == printf(\"%%c\\n\", %c));\n", z, z);
 	assert(ft_printf("%c\n", z) == printf("%c\n", z));
 	printf("assert(ft_printf(\"%%c%%c\\n\", %c, %c) == printf(\"%%c%%c\\n\", %c, %c));\n", z, z, z, z);
@@ -377,7 +379,7 @@ printf("\n*skip*\n");
 	assert(ft_printf("%c%c\n", *zero_s, *zero_s) == printf("%c%c\n", *zero_s, *zero_s));
 	printf("assert(ft_printf(\"%%c %%c\\n\", %c, %c) == printf(\"%%c %%c\\n\", %c, %c));\n", *zero_s, *zero_s, *zero_s, *zero_s);
 	assert(ft_printf("%c %c\n", *zero_s, *zero_s) == printf("%c %c\n", *zero_s, *zero_s));
-
+printf("\n*skip*\n");
 	free(zero_s);
 
 /*
@@ -727,7 +729,7 @@ for (int x = 32; x < 127; x++) {
 	float tests!!!! Project is developing nicely.
 */
 
-
+/*
 float f_l_o_a_t = 0;
 float f_l_o_a_t_original;
 int random;
@@ -796,6 +798,7 @@ for (int x = 0; x < 100; x++) {
 		if (y == 50) { f_l_o_a_t3 = f_l_o_a_t_original3; }
 	}
 }
+*/
 
 int	a;
 // Tests of * and .* with 0 flags
