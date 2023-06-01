@@ -1,8 +1,0 @@
-
-
-		##########################################
-		#  Congratulations!!! All Tests Passed!  #
-		##########################################
-
-
-Correct is 376407 and incorrect is 0
