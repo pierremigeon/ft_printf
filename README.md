@@ -13,7 +13,9 @@ Once again, I'm updating a old project. Taking a break from the minishell to cat
 
 ## A note on tests:
 I have written extensive tests for this project. Printf is quite versatile, taking many different parameters such as flags, conversions, length modifiers, width and precision specifiers and various data types. On top of that, it is a variadic function, which means that it can take a variable length of arguments. In order to verify that my coding of the classic printf() function is correct, or close to it, I have written a number of tests which use the <assert.h> library macro in order to compare the output of my program to the output of the standard C printf() function. 
-Currently, my program successfully passes 376,407 tests. Many of these tests use different looping schema to cover a range of values, for example spanning boundary values for different data types as well as intermediate values. These tests are present in ./src/main.c. In order to run these tests, navigate to the './test_suite' directory and run make filter. The file "less assert_test_output_filtered.txt" contains the assert statement and two lines of output, one from standard printf() and another from my ft_printf().
+Currently, my program successfully passes **376,407 tests**. Many of these tests use different looping schema to cover a range of values, for example spanning boundary values for different data types as well as intermediate values. 
+
+The ft_printf test suite can be found in ./src/main.c. In order to run the tests, navigate to the './test_suite' directory and run make filter. assert_test_output_filtered.txt contains the assert statement and two lines of output, one from standard printf() and another from my ft_printf(), making it possible to view the test run followed by both outputs. 
 ```
 cd ./test_suite
 make filter
