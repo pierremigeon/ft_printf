@@ -1,15 +1,20 @@
 # ft_printf
 A project to re-code the standard printf function
 
-Once again, I'm updating a old project. Taking a break from the minishell to catch my breath! This one's simple by comparison. At least, I can say that not yet having worked on the %f flag. I expect that to be the hardest part of the project!
+Usage/Description:
+```
+int  ft_printf(const char * restrict format, ...);
+```
+The ft_printf() function produces output according to a format as described below. The function writes the output under the control of a format string that specifies how subsequent arguments are converted for output. ft_printf() is multivariatic- that is, it expects a varriable number (zero or more) of arguments after the initial format string. It returns as an int the number of bytes printed. 
 
--Pierre
+The format string is composed of zero or more directives: ordinary characters (not %), which are copied unchanged to the output stream; and conversion specifications, each of which results in fetching zero or more subsequent arguments.  Each conversion specification is introduced by the % character.  After the %, the following appear in sequence:
+  1) zero or more of the following flags: + 0 . * -
+  2) Optional decimal digit representing the maximum field width
+  3) An optional precision, in the form of a period '.' followed by an optional digit string
+  4) An optional length modifier, that specifies the size of the argument h hh l ll
+  5) A (non-optional) conversion specifier c s p d i u x X f
+  6) %% prints '%'
 
-## Requirements
-1) must handle cspdiuxXf% conversions 
-2) must handle '+0 .*-' flags
-3) must handle width and precision specifiers
-4) must handle length modifiers such as h, hh, l, ll, etc
 
 ## A note on tests:
 I have written extensive tests for this project. Printf is quite versatile, taking many different parameters such as flags, conversions, length modifiers, width and precision specifiers and various data types. On top of that, it is a variadic function, which means that it can take a variable length of arguments. In order to verify that my coding of the classic printf() function is correct, or close to it, I have written a number of tests which use the <assert.h> library macro in order to compare the output of my program to the output of the standard C printf() function. 
