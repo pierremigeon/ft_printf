@@ -5,7 +5,7 @@ Usage/Description:
 ```
 int  ft_printf(const char * restrict format, ...);
 ```
-The ft_printf() function produces output according to a format as described below. The function writes the output under the control of a format string that specifies how subsequent arguments are converted for output. ft_printf() is multivariatic- that is, it expects a varriable number (zero or more) of arguments after the initial format string. It returns as an int the number of bytes printed. 
+The ft_printf() function produces output according to a format as described below. The function writes the output under the control of a format string that specifies how subsequent arguments are converted for output. ft_printf() is variadic- that is, it expects a varriable number (zero or more) of arguments after the initial format string. It returns as an int the number of bytes printed. 
 
 The format string is composed of zero or more directives: ordinary characters (not %), which are copied unchanged to the output stream; and conversion specifications, each of which results in fetching zero or more subsequent arguments.  Each conversion specification is introduced by the % character.  After the %, the following appear in sequence:
   1) zero or more of the following flags: + 0 . * -
@@ -17,7 +17,7 @@ The format string is composed of zero or more directives: ordinary characters (n
 
 
 ## A note on tests:
-I have written extensive tests for this project. Printf is quite versatile, taking many different parameters such as flags, conversions, length modifiers, width and precision specifiers and various data types. On top of that, it is a variadic function, which means that it can take a variable length of arguments. In order to verify that my coding of the classic printf() function is correct, or close to it, I have written a number of tests which use the <assert.h> library macro in order to compare the output of my program to the output of the standard C printf() function. 
+I have written extensive tests for this project. Printf is quite versatile, taking many different parameters such as flags, conversions, length modifiers, width and precision specifiers and various data types. On top of that, it is a variadic function, which means that it can take a variable number of arguments. In order to verify that my coding of the classic printf() function is correct, or close to it, I have written a number of tests which use the <assert.h> library macro in order to compare the output of my program to the output of the standard C printf() function. 
 Currently, my program successfully passes **376,407 tests**. Many of these tests use different looping schema to cover a range of values, for example spanning boundary values for different data types as well as intermediate values. 
 
 The ft_printf test suite can be found in ./src/main.c. In order to run the tests, navigate to the './test_suite' directory and run make filter. assert_test_output_filtered.txt contains the assert statement and two lines of output, one from standard printf() and another from my ft_printf(), making it possible to view the test run followed by both outputs. 
